@@ -215,7 +215,7 @@ let pt='del';
 function applyQ(){const t=$('ty').value,v=$('qa').value;if(t!==pt){$(pt).value='';pt=t}$(t).value=v}
 $('ty').onchange=applyQ;$('qa').oninput=applyQ;
 const SID='1PMooyxEBlZcOpJmXH-aRkvmJWN-hnE_PvNej0K8W-0s';
-const CLIENT_ID='PASTE_YOUR_CLIENT_ID_HERE';
+const CLIENT_ID='825840710134-jlflm38t6bnijmk66a4v2d6fauu676om.apps.googleusercontent.com';
 const SCOPE='https://www.googleapis.com/auth/spreadsheets';
 let tok=null,tokExp=0,tc=null;
 try{const t=JSON.parse(localStorage.getItem('gtok')||'null');if(t&&t.exp>Date.now()){tok=t.t;tokExp=t.exp}}catch(e){}

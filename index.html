@@ -12,6 +12,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#030d1f">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
   --glass:rgba(40,52,130,.45);--edge:rgba(160,175,255,.28);--text:#f2f4ff;--muted:#aab2e8;--accent:#8fa0ff}
@@ -156,6 +157,22 @@ body{min-height:0}
 .scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:8px;padding-bottom:24px;overscroll-behavior:contain;scrollbar-width:none}
 .scroll::-webkit-scrollbar{display:none}
 .scroll>*{flex:none}
+
+.tab{font-size:12.5px}
+.segs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:8px}
+.seg{font:inherit;font-size:12px;font-weight:600;color:var(--muted);background:var(--light);border:1px solid var(--edge);border-radius:999px;padding:7px 0;cursor:pointer}
+.seg.on{background:var(--tabon);color:#fff}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.nb{font:inherit;font-size:24px;line-height:1;color:#fff;background:var(--light);border:1px solid var(--edge);border-radius:999px;width:38px;height:34px;cursor:pointer}
+.nt{text-align:center;font-weight:600;font-size:14px}.nt .rng{display:block;margin:2px 0 0;font-size:11px}
+.ar{display:flex;justify-content:space-between;padding:5px 6px;font-size:13px;border-bottom:1px solid var(--dv)}.ar:last-child{border-bottom:0}.ar b{color:#F5D6A6}
+.col b{font-size:14px}
+#rep>button.save{margin-bottom:4px}
+.bk summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;padding:12px 16px;color:#fff}
+.bk summary::-webkit-details-marker{display:none}
+.bk summary::after{content:'\25BE';color:#F5D6A6;font-size:16px}
+.bk[open] summary::after{content:'\25B4'}
+.bk[open] summary{margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -165,12 +182,15 @@ body{min-height:0}
   <div class="card tabs">
     <button class="tab on" data-t="earn">Earnings</button>
     <button class="tab" data-t="form">Entry Form</button>
+    <button class="tab" data-t="rep">Reports</button>
   </div>
 
   <div class="scroll">
   <div class="card sec" id="gcard" style="padding:10px"><button class="save" id="gs" type="button" style="width:100%">Sign in with Google</button></div>
 
   <div class="panel on" id="earn"></div>
+
+  <div class="panel" id="rep"></div>
 
   <div class="panel" id="form">
     <form class="card" id="f">
@@ -218,6 +238,7 @@ function render(){
     monthRows+=row(MN[d.getMonth()]+' '+String(d.getFullYear()).slice(2),E.filter(x=>x.ym===k).map(x=>x.e))}
   let yearRows='';for(let y=2026;y<=2035;y++)yearRows+=row(y,E.filter(x=>x.y===y).map(x=>x.e));
   $('earn').innerHTML=table('Day<span class="rng">'+'('+dm(ws)+'-'+dm(new Date(ws.getTime()+4*864e5))+')'+'</span>',dayRows)+table('Week<span class="rng">'+(()=>{const d=new Date(+cur.ym.slice(0,4),+cur.ym.slice(5)-1,1);return '('+MN[d.getMonth()]+')'})()+'</span>',weekRows)+table('Month',monthRows,'sc m')+table('Year',yearRows,'sc y');
+  renderRep();
 }
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
@@ -300,6 +321,94 @@ $('f').onsubmit=e=>{
   sync([en]);
 };
 $('sy').onclick=()=>sync(entries.filter(e=>!e.s));
+/* ===== REPORTS ===== */
+let rt='week',rc=new Date(),RP=null;
+const FM=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const tt=l=>sum(l).reduce((a,b)=>a+b,0);
+const dw=l=>new Set(l.map(e=>e.d)).size;
+const av=(l,n)=>n?fmt(tt(l)/n):'-';
+const hr=l=>av(l,dw(l)*10);
+function repBuild(){
+  const E=entries.map(e=>Object.assign({e},info(e.d,e.nm)));
+  const y=rc.getFullYear(),m=rc.getMonth();
+  let t,sub='',list,rows,A=[];
+  if(rt==='day'){
+    const k=iso(rc),c=info(k);list=entries.filter(e=>e.d===k);
+    t=rc.toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
+    const ws=new Date(rc);ws.setDate(rc.getDate()-((rc.getDay()+6)%7));
+    rows=[];
+    const ml=E.filter(x=>x.ym===c.ym).map(x=>x.e);
+    A=[['Month avg per day worked',av(ml,dw(ml))]];
+  }else if(rt==='week'){
+    const mo=new Date(rc);mo.setDate(rc.getDate()-((rc.getDay()+6)%7));
+    const th=new Date(mo);th.setDate(mo.getDate()+3);const su=new Date(mo);su.setDate(mo.getDate()+6);
+    const c=info(iso(th));list=E.filter(x=>x.ym===c.ym&&x.w===c.w).map(x=>x.e);
+    t='Week '+c.w+', '+MN[th.getMonth()]+' '+th.getFullYear();
+    sub=fd(mo)+' - '+fd(su);
+    const ks=[];rows=[0,1,2,3,4].map(i=>{const d=new Date(mo);d.setDate(mo.getDate()+i);const k=iso(d);ks.push(k);return[d.toLocaleDateString('en-AU',{weekday:'short'}).toUpperCase()+' '+dm(d),list.filter(e=>e.d===k)]});
+    const rest=list.filter(e=>!ks.includes(e.d));if(rest.length)rows.push(['Other days',rest]);
+    A=[['Days worked',String(dw(list))],['Avg per day worked',av(list,dw(list))],['Avg per hour (10 hrs/day)',hr(list)]];
+  }else if(rt==='month'){
+    const k=iso(new Date(y,m,1)).slice(0,7);list=E.filter(x=>x.ym===k).map(x=>x.e);
+    t=FM[m]+' '+y;
+    rows=[1,2,3,4,5].map(n=>['Week '+n,E.filter(x=>x.ym===k&&x.w===n).map(x=>x.e)]);
+    const wn=new Set(E.filter(x=>x.ym===k).map(x=>x.w)).size;
+    A=[['Days worked',String(dw(list))],['Avg per day worked',av(list,dw(list))],['Avg per hour (10 hrs/day)',hr(list)],['Avg per week',av(list,wn)]];
+  }else{
+    const s=m>=9?9:m>=6?6:m>=3?3:0,q={6:1,9:2,0:3,3:4}[s],fy=s>=6?y+1:y;
+    t='Q'+q+' FY'+String(fy).slice(2);sub=MN[s]+' - '+MN[s+2]+' '+y;
+    const ks=[0,1,2].map(i=>iso(new Date(y,s+i,1)).slice(0,7));
+    const Q=E.filter(x=>ks.includes(x.ym));list=Q.map(x=>x.e);
+    rows=ks.map((k,i)=>[MN[s+i]+' '+String(y).slice(2),E.filter(x=>x.ym===k).map(x=>x.e)]);
+    const mn=new Set(Q.map(x=>x.ym)).size,wn=new Set(Q.map(x=>x.ym+x.w)).size;
+    A=[['Days worked',String(dw(list))],['Avg per day worked',av(list,dw(list))],['Avg per hour (10 hrs/day)',hr(list)],['Avg per week',av(list,wn)],['Avg per month',av(list,mn)]];
+  }
+  const[de,pu]=sum(list);
+  RP={t,sub,de,pu,tot:de+pu,A,rows:rows.map(r=>{const[a,b]=sum(r[1]);return[r[0],a,b]})};
+  RP.rl=rows.map(r=>r[1]);RP.hd={day:'Day',week:'Day',month:'Week',quarter:'Month'}[rt];
+  return RP;
+}
+function renderRep(){
+  const R=repBuild(),P=['week','month','quarter'],N=['Week','Month','Quarter'];
+  const seg=P.map((p,i)=>`<button type="button" class="seg${p===rt?' on':''}" data-r="${p}">${N[i]}</button>`).join('');
+  const av2=R.A.map(a=>`<div class="ar"><span>${a[0]}</span><b>${a[1]}</b></div>`).join('');
+  $('rep').innerHTML=`<div class="card sec"><div class="segs">${seg}</div>
+  <div class="nav"><button type="button" class="nb" data-n="-1">&#8249;</button><div class="nt">${R.t}${R.sub?`<span class="rng">${R.sub}</span>`:''}</div><button type="button" class="nb" data-n="1">&#8250;</button></div></div>
+  <div class="card sec"><div class="cols"><div class="col"><small>Deliveries</small><b>${fmt(R.de)}</b></div><div class="col"><small>Pickups</small><b>${fmt(R.pu)}</b></div><div class="col"><small>Total</small><b>${fmt(R.tot)}</b></div></div></div>
+  <div class="card sec">${av2}</div>
+  ${R.rows.length?`<details class="bk"><summary class="card sec">Breakdown</summary>${table(R.hd,R.rows.map((r,i)=>row(r[0],R.rl[i])).join(''))}</details>`:''}
+  <button class="save" type="button" id="pdfb">Download PDF</button>`;
+}
+
+$('rep').onclick=ev=>{
+  const r=ev.target.closest('[data-r]'),n=ev.target.closest('[data-n]');
+  if(r){rt=r.dataset.r;renderRep();return}
+  
+  if(n){const s=+n.dataset.n,y=rc.getFullYear(),m=rc.getMonth();
+    rc=rt==='day'?new Date(y,m,rc.getDate()+s):rt==='week'?new Date(y,m,rc.getDate()+7*s):rt==='month'?new Date(y,m+s,1):new Date(y,m+3*s,1);
+    renderRep();return}
+  if(ev.target.id==='pdfb')mkPdf();
+};
+async function mkPdf(){
+  const J=window.jspdf;if(!J){alert('PDF tool is still loading. Check your internet and try again.');return}
+  const R=RP,d=new J.jsPDF({unit:'mm',format:'a4'});let y=20;
+  d.setFont('helvetica','bold');d.setFontSize(18);d.text('BMP Earnings Report',15,y);y+=8;
+  d.setFontSize(13);d.text(rt[0].toUpperCase()+rt.slice(1)+': '+R.t,15,y);y+=6;
+  d.setFont('helvetica','normal');d.setFontSize(10);
+  if(R.sub){d.text(R.sub,15,y);y+=5}
+  d.text('Generated '+new Date().toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}),15,y);y+=5;
+  d.line(15,y,195,y);y+=8;
+  const kv=(a,b,bold)=>{d.setFont('helvetica',bold?'bold':'normal');d.setFontSize(11);d.text(a,15,y);d.text(b,195,y,{align:'right'});y+=7};
+  kv('Deliveries',fmt(R.de));kv('Pickups',fmt(R.pu));kv('Total',fmt(R.tot),true);y+=3;
+  R.A.forEach(a=>kv(a[0],a[1]));y+=4;if(R.rows.length){d.line(15,y,195,y);y+=7;
+  d.setFont('helvetica','bold');d.setFontSize(10);d.text(R.hd,15,y);d.text('Deliveries',105,y,{align:'right'});d.text('Pickups',150,y,{align:'right'});d.text('Total',195,y,{align:'right'});y+=3;d.line(15,y,195,y);y+=6;
+  d.setFont('helvetica','normal');
+  R.rows.forEach(r=>{d.text(String(r[0]),15,y);d.text(fmt(r[1]),105,y,{align:'right'});d.text(fmt(r[2]),150,y,{align:'right'});d.text(fmt(r[1]+r[2]),195,y,{align:'right'});y+=6.5})}
+  const nm='BMP-Earnings-'+rt+'-'+iso(rc)+'.pdf',blob=d.output('blob'),f=new File([blob],nm,{type:'application/pdf'});
+  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:nm});return}}catch(e){if(e&&e.name==='AbortError')return}
+  d.save(nm);
+}
+
 render();
 </script>
 </body>

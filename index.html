@@ -219,6 +219,21 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
 .er .ed{font-weight:600}.er .em{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.er b{color:#F5D6A6}
 .er .ps{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:#ffb020}
 .rn{color:var(--muted);font-size:13px;padding:6px 2px}
+/* entry form sub-tabs, day popup, bright-gold target */
+.segs.two{grid-template-columns:1fr 1fr;margin-bottom:0}
+#ftabs.lock{pointer-events:none;opacity:.6}
+.fg{display:flex;flex-direction:column;gap:10px}
+#f{padding:14px;gap:10px}
+.cf.tap{cursor:pointer;outline:1px solid rgba(245,214,166,.55);outline-offset:-1px}
+.pop{position:fixed;inset:0;z-index:50;background:rgba(0,8,25,.66);align-items:center;justify-content:center;padding:16px}
+.popc{width:100%;max-width:420px;max-height:84vh;overflow:auto;background:rgba(8,28,70,.98);border:1px solid var(--edge);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 16px 48px rgba(0,0,0,.6)}
+.popc h3{margin:0 0 2px;font-size:16px;text-align:center;color:#F5D6A6}
+.pe{background:rgba(70,150,255,.16);border:1px solid var(--edge);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.pi{display:flex;justify-content:space-between;gap:8px;font-size:14px}.pi b{color:#F5D6A6;white-space:nowrap}.pi b.neg{color:#ff9aa8}
+.pb{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.popc .save{padding:10px;font-size:14px;width:100%}
+.tg.hit .tgb i{background:linear-gradient(90deg,#FFB300,#FFE14D);box-shadow:0 0 8px 1px rgba(255,200,0,.85)}
+.tg.hit .tgt b{color:#FFD21F;text-shadow:0 0 6px rgba(255,200,0,.6)}
 </style>
 </head>
 <body>
@@ -240,25 +255,24 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
 
   <div class="panel" id="form">
     <form class="card" id="f">
+      <div class="segs two" id="ftabs"><button type="button" class="seg on" data-m="inc">Income</button><button type="button" class="seg" data-m="exp">Expense</button></div>
       <label>Day and Date<div class="row2"><input id="day" type="text" readonly><input id="date" type="date" required></div></label>
-      <label>Deliveries<div class="cur"><span>A$</span><input id="del" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"></div></label>
-      <label>Pickups<div class="cur"><span>A$</span><input id="pu" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"></div></label>
-      <label>Select Type<select id="ty"><option value="del">Deliveries</option><option value="pu">Pickups</option><option value="ex">Expense</option></select></label>
-      <label><div class="cur"><span>A$</span><input id="qa" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"></div></label>
-      <input type="hidden" id="ex">
-      <div id="exf" style="display:none;flex-direction:column;gap:14px">
+      <div class="fg" id="incf">
+        <label>Deliveries<div class="cur"><span>A$</span><input id="del" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"></div></label>
+        <label>Pickups<div class="cur"><span>A$</span><input id="pu" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"></div></label>
+      </div>
+      <div class="fg" id="expf" style="display:none">
+        <label>Expense amount<div class="cur"><span>A$</span><input id="ex" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"></div></label>
         <label>Expense category<select id="cat"><option>Fuel</option><option>Tolls</option><option>Parking</option><option>Maintenance &amp; repairs</option><option>Insurance</option><option>Phone</option><option>Other</option></select></label>
         <label>Note (optional)<input id="note" type="text" maxlength="60" placeholder="e.g. BP Rocklea"></label>
       </div>
       <label>Counts toward<select id="cm"><option value="">This month</option><option value="nm">1st week of next month</option></select></label>
       <button class="save" type="submit" id="sv">Save Entry</button>
       <button class="save alt" type="button" id="cn" style="display:none">Cancel edit</button>
-      <button class="save del" type="button" id="dl" style="display:none">Delete this entry</button>
-      <button class="save alt" type="button" id="sy">Sync Unsaved Entries to Google Sheets</button>
       <div class="msg" id="msg"></div>
     </form>
-    <div class="card sec" id="rl"></div>
   </div>
+  <div class="pop" id="pop" style="display:none"><div class="popc"><h3 id="pt"></h3><div id="pl"></div><button class="save alt" type="button" id="pc">Cancel</button></div></div>
   </div>
 </div>
 
@@ -277,7 +291,7 @@ function info(ds,nm){const d=new Date(ds+'T00:00');const m=new Date(d);m.setDate
   if(nm){const t=new Date(th.getFullYear(),th.getMonth()+1,1);ym=iso(t).slice(0,7);y=t.getFullYear();w=1}
   return{ds,ym,y,w}}
 const sum=l=>{const de=l.reduce((a,e)=>a+(e.a!==undefined?e.a:(e.del||0)),0),pu=l.reduce((a,e)=>a+(e.pu||0),0);return[de,pu]};
-const row=(n,l)=>{const[de,pu]=sum(l);return `<div class="dg"><div class="dn">${n}</div><i class="vd"></i><div class="cf">${fmt(de)}</div><div class="cf">${fmt(pu)}</div><i class="vd"></i><div class="cf t">${fmt(de+pu)}</div></div>`};
+const row=(n,l,k)=>{const[de,pu]=sum(l);return `<div class="dg"><div class="dn">${n}</div><i class="vd"></i><div class="cf">${fmt(de)}</div><div class="cf">${fmt(pu)}</div><i class="vd"></i><div class="cf t${k?' tap':''}"${k?` data-day="${k}"`:''}>${fmt(de+pu)}</div></div>`};
 const table=(h,rows,cls)=>`<div class="card sec"><div class="dg"><div class="hd h l">${h}</div><i class="vd"></i><div class="hd h">Deliveries</div><div class="hd h">Pickups</div><i class="vd"></i><div class="hd h">Total</div></div><div class="bd ${cls||''}">${rows}</div></div>`;
 const WT=5000,MT=20000; /* weekly and monthly targets (A$) */
 const dm=d=>String(d.getDate()).padStart(2,'0');const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -290,7 +304,7 @@ function render(){
   const _we=new Date(ws.getTime()+4*864e5);
   $('bLeft').textContent=now.toLocaleDateString('en-AU',{weekday:'short'}).replace('.','')+' '+String(now.getDate()).padStart(2,'0')+'-'+MN[now.getMonth()]+'-'+now.getFullYear();
   $('bWeek').textContent='Week-'+cur.w+' ('+dm(ws)+'-'+dm(_we)+')';
-  const dayRows=['MON','TUE','WED','THU','FRI'].map((n,i)=>{const dt=new Date(ws);dt.setDate(ws.getDate()+i);const k=iso(dt);return row(n,entries.filter(e=>e.d===k))}).join('');
+  const dayRows=['MON','TUE','WED','THU','FRI','SAT','SUN'].map((n,i)=>{const dt=new Date(ws);dt.setDate(ws.getDate()+i);const k=iso(dt);if(i>4&&!entries.some(e=>e.d===k)&&k!==iso(now))return '';return row(n,entries.filter(e=>e.d===k),k)}).join('');
   const weekRows=[1,2,3,4,5].map(n=>row('Week '+n,E.filter(x=>x.ym===cur.ym&&x.w===n).map(x=>x.e))).join('');
   let monthRows='';for(let i=0;i<12;i++){const d=new Date(2026,9+i,1),k=iso(d).slice(0,7);
     monthRows+=row(MN[d.getMonth()]+' '+String(d.getFullYear()).slice(2),E.filter(x=>x.ym===k).map(x=>x.e))}
@@ -309,9 +323,6 @@ document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.t));
   fit();
 });
-let pt='del';
-function applyQ(){const t=$('ty').value,v=$('qa').value;if(t!==pt){$(pt).value='';pt=t}$(t).value=v}
-$('ty').onchange=()=>{applyQ();$('exf').style.display=$('ty').value==='ex'?'flex':'none'};$('qa').oninput=applyQ;
 const SID='1PMooyxEBlZcOpJmXH-aRkvmJWN-hnE_PvNej0K8W-0s';
 const CLIENT_ID='825840710134-jlflm38t6bnijmk66a4v2d6fauu676om.apps.googleusercontent.com';
 const SCOPE='https://www.googleapis.com/auth/spreadsheets';
@@ -342,7 +353,7 @@ const mcp={callTool:async(srv,tool,a)=>{
   if(tool==='update_spreadsheet')return{payload:await api(b+':batchUpdate',{method:'POST',body:JSON.stringify({requests:a.requests})})};
 }};
 /* ===== ENTRIES, EXPENSES, SHEET SYNC, OFFLINE QUEUE ===== */
-const say=t=>{$('msg').textContent=t};
+const say=t=>{$('msg').textContent=t;fit()};
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const dayName=d=>new Date(d+'T00:00').toLocaleDateString('en-AU',{weekday:'long'});
 let pendingOps=[];try{pendingOps=JSON.parse(localStorage.getItem('pops')||'[]')}catch(e){}
@@ -388,7 +399,7 @@ async function loadSheet(){
     const es=editing?sig(editing):null;
     entries=vals.map(parseRow).filter(Boolean).concat(entries.filter(e=>!e.s));
     if(es){const f=entries.find(e=>sig(e)===es);if(f)editing=f;else{editing=null;clearForm();setEdit(null)}}
-    persist();render();renderList();
+    persist();render();
   }catch(err){}
 }
 async function sync(list){
@@ -398,7 +409,7 @@ async function sync(list){
   try{
     if(list.some(e=>e.x)){try{await ensureHdr()}catch(x){if(x&&x.code)throw x}}
     await mcp.callTool('Google Sheets','append_values',{spreadsheetId:SID,range:'Untitled!A1',values:rows});
-    list.forEach(e=>e.s=true);persist();renderList();say('Saved to Google Sheets');
+    list.forEach(e=>e.s=true);persist();say('Saved to Google Sheets');
     try{await mcp.callTool('Google Sheets','update_spreadsheet',{spreadsheetId:SID,requests:[{sortRange:{range:{sheetId:1413484601,startRowIndex:1,startColumnIndex:0,endColumnIndex:9},sortSpecs:[{dimensionIndex:0,sortOrder:'ASCENDING'}]}}]})}catch(x){}
   }catch(err){
     const c=err&&err.code;
@@ -420,56 +431,68 @@ async function autoSync(){
     const u2=entries.filter(e=>!e.s);if(u2.length)await sync(u2);
   }finally{asBusy=false;updBadge()}
 }
-window.addEventListener('load',()=>{authUI();$('gs').onclick=signIn;updBadge();renderList();if(tok)autoSync().then(loadSheet)});
+window.addEventListener('load',()=>{authUI();$('gs').onclick=signIn;updBadge();if(tok)autoSync().then(loadSheet)});
 window.addEventListener('online',()=>{autoSync()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)autoSync()});
 setInterval(()=>{autoSync()},45000);
 
-let editing=null;
-function setEdit(e){editing=e;$('sv').textContent=e?'Update Entry':'Save Entry';$('cn').style.display=$('dl').style.display=e?'block':'none'}
-function clearForm(){['qa','del','pu','ex','note'].forEach(i=>$(i).value='');$('cm').value='';$('ty').value='del';pt='del';$('exf').style.display='none';$('cat').selectedIndex=0}
+let editing=null,fm='inc';
+const showTab=t=>document.querySelector('.tab[data-t='+t+']').click();
+function setMode(m){fm=m;$('incf').style.display=m==='inc'?'flex':'none';$('expf').style.display=m==='exp'?'flex':'none';
+  document.querySelectorAll('#ftabs .seg').forEach(b=>b.classList.toggle('on',b.dataset.m===m));fit()}
+$('ftabs').onclick=ev=>{const b=ev.target.closest('[data-m]');if(b&&!editing)setMode(b.dataset.m)};
+function setEdit(e){editing=e;$('sv').textContent=e?'Update Entry':'Save Entry';$('cn').style.display=e?'block':'none';$('ftabs').classList.toggle('lock',!!e)}
+function clearForm(){['del','pu','ex','note'].forEach(i=>$(i).value='');$('cm').value='';$('cat').selectedIndex=0;setMode('inc')}
 function startEdit(e){
   clearForm();setEdit(e);$('date').value=e.d;setDay();
-  if(e.x){$('ty').value='ex';pt='ex';$('exf').style.display='flex';$('ex').value=e.x;$('qa').value=e.x;
+  if(e.x){setMode('exp');$('ex').value=e.x;
     if([...$('cat').options].some(o=>o.value===e.cat))$('cat').value=e.cat;$('note').value=e.note||''}
   else{$('del').value=(e.a!==undefined?e.a:e.del)||'';$('pu').value=e.pu||''}
   $('cm').value=e.nm?'nm':'';
   say('Editing entry. Change it, then tap Update Entry.');
-  document.querySelector('.scroll').scrollTop=0;
+  showTab('form');
 }
 function removeEntry(e){const i=entries.indexOf(e);if(i<0)return;entries.splice(i,1);if(e.s){pendingOps.push({sig:sig(e)});savePops()}persist()}
-function renderList(){
-  const el=$('rl');if(!el)return;
-  const L=entries.map((e,i)=>({e,i})).sort((a,b)=>a.e.d<b.e.d?1:a.e.d>b.e.d?-1:b.i-a.i).slice(0,30);
-  if(!L.length){el.innerHTML='<h2>Recent entries</h2><div class="rn">No entries yet</div>';return}
-  el.innerHTML='<h2>Recent entries <small>tap to edit</small></h2>'+L.map(({e,i})=>{
-    const dt=new Date(e.d+'T00:00'),ds=dt.toLocaleDateString('en-AU',{weekday:'short'}).replace('.','')+' '+String(dt.getDate()).padStart(2,'0')+'-'+MN[dt.getMonth()];
-    const de=e.a!==undefined?e.a:(e.del||0),pu=e.pu||0;
-    const mid=e.x?'Expense: '+esc(e.cat||'')+(e.note?' - '+esc(e.note):''):'Del '+fmt(de)+' / Pick '+fmt(pu);
-    return `<button type="button" class="er${e.x?' ex':''}" data-i="${i}"><span class="ed">${ds}</span><span class="em">${mid}</span><b>${e.x?'-'+fmt(e.x):fmt(de+pu)}</b>${e.s?'':'<i class="ps" title="Waiting to sync"></i>'}</button>`}).join('');
-}
-$('rl').onclick=ev=>{const b=ev.target.closest('.er');if(!b)return;const e=entries[+b.dataset.i];if(e)startEdit(e)};
-$('cn').onclick=()=>{clearForm();setEdit(null);say('')};
-$('dl').onclick=()=>{
-  if(!editing||!confirm('Delete this entry? It will also be removed from Google Sheets.'))return;
-  removeEntry(editing);clearForm();setEdit(null);say('Entry deleted');render();renderList();autoSync();
-};
+$('cn').onclick=()=>{clearForm();setEdit(null);say('');showTab('earn')};
 $('f').onsubmit=ev=>{
   ev.preventDefault();
-  const d=$('date').value,nm=$('cm').value==='nm';
-  const del=parseFloat($('del').value)||0,pu=parseFloat($('pu').value)||0,x=parseFloat($('ex').value)||0;
-  const add=[];
-  if(del||pu||!x)add.push({d,del,pu,nm});
-  if(x>0)add.push({d,del:0,pu:0,nm,x,cat:$('cat').value,note:$('note').value.trim()});
+  const d=$('date').value,nm=$('cm').value==='nm';let en;
+  if(fm==='exp'){const x=parseFloat($('ex').value)||0;if(!(x>0)){say('Enter an expense amount.');return}
+    en={d,del:0,pu:0,nm,x,cat:$('cat').value,note:$('note').value.trim()}}
+  else{if($('del').value===''&&$('pu').value===''){say('Enter deliveries or pickups.');return}
+    en={d,del:parseFloat($('del').value)||0,pu:parseFloat($('pu').value)||0,nm}}
   const was=!!editing;if(editing)removeEntry(editing);
-  add.forEach(en=>entries.push(en));persist();
-  sel=d;clearForm();setEdit(null);say(was?'Entry updated':'Saved on this device');
-  render();renderList();autoSync();
+  entries.push(en);persist();
+  sel=d;clearForm();setEdit(null);say(was?'Entry updated':'Saved');
+  render();autoSync();
+  if(was)showTab('earn');
 };
-$('sy').onclick=async()=>{
-  if(!entries.some(e=>!e.s)&&!pendingOps.length){say('Everything is already in Google Sheets');return}
-  await autoSync();
+/* ===== DAY POPUP (tap a day's Total on the Earnings tab) ===== */
+let popDay=null,popConf=null;
+function openDay(k){
+  popDay=k;popConf=null;const dt=new Date(k+'T00:00');
+  $('pt').textContent=dt.toLocaleDateString('en-AU',{weekday:'long'})+' '+String(dt.getDate()).padStart(2,'0')+'-'+MN[dt.getMonth()]+'-'+dt.getFullYear();
+  const L=entries.filter(e=>e.d===k);
+  $('pl').innerHTML=(L.length?L.map(e=>{const i=entries.indexOf(e),de=e.a!==undefined?e.a:(e.del||0),pu=e.pu||0;
+    const lab=e.x?`<span>Expense: ${esc(e.cat||'')}${e.note?' - '+esc(e.note):''}</span><b class="neg">-${fmt(e.x)}</b>`:`<span>Del ${fmt(de)} / Pick ${fmt(pu)}</span><b>${fmt(de+pu)}</b>`;
+    return `<div class="pe"><div class="pi">${lab}</div><div class="pb"><button type="button" class="save alt" data-a="edit" data-i="${i}">Edit</button><button type="button" class="save del" data-a="del" data-i="${i}">Delete</button></div></div>`}).join(''):'<div class="rn">No entries for this day</div>')
+    +`<button type="button" class="save alt" data-a="add">+ Add entry for this day</button>`;
+  $('pop').style.display='flex';
+}
+const closePop=()=>{$('pop').style.display='none';popDay=null};
+$('pc').onclick=closePop;
+$('pop').onclick=ev=>{
+  if(ev.target===$('pop')){closePop();return}
+  const b=ev.target.closest('[data-a]');if(!b)return;
+  if(b.dataset.a==='add'){const k=popDay;closePop();clearForm();setEdit(null);$('date').value=k;setDay();say('');showTab('form');return}
+  const e=entries[+b.dataset.i];if(!e)return;
+  if(b.dataset.a==='edit'){closePop();startEdit(e);return}
+  if(b.dataset.a==='del'){
+    if(popConf!==e){popConf=e;b.textContent='Tap again to confirm';return}
+    removeEntry(e);const k=popDay;render();autoSync();openDay(k);
+  }
 };
+$('earn').onclick=ev=>{const c=ev.target.closest('[data-day]');if(c)openDay(c.dataset.day)};
 /* ===== REPORTS ===== */
 let rt='week',rc=new Date(),RP=null;
 const FM=['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -562,15 +585,15 @@ async function mkPdf(){
 
 render();
 
-/* Fit Earnings tab and Reports month view to the screen (no page scroll) */
+/* Fit every tab to the screen (no page scroll) where possible */
 function fit(){try{
   const sc=document.querySelector('.scroll'),p=document.querySelector('.panel.on');
   document.querySelectorAll('.panel').forEach(x=>x.style.zoom='');
-  const lock=p.id==='earn'||(p.id==='rep'&&(rt==='month'||rt==='week'));
-  sc.classList.toggle('nofit',lock);
-  if(!lock)return;
+  sc.classList.add('nofit');
   const avail=sc.clientHeight-(sc.scrollHeight-p.offsetHeight)-6;
-  if(avail>0&&p.offsetHeight>avail)p.style.zoom=Math.max(.5,avail/p.offsetHeight);
+  if(avail<=0||p.offsetHeight<=avail)return;
+  const z=avail/p.offsetHeight;
+  if(z>=.62)p.style.zoom=z;else sc.classList.remove('nofit');
 }catch(e){}}
 window.addEventListener('resize',fit);window.addEventListener('orientationchange',fit);window.addEventListener('load',fit);
 document.addEventListener('toggle',fit,true);

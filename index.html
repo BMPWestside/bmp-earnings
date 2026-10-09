@@ -173,6 +173,13 @@ body{min-height:0}
 .bk summary::after{content:'\25BE';color:#F5D6A6;font-size:16px}
 .bk[open] summary::after{content:'\25B4'}
 .bk[open] summary{margin-bottom:8px}
+
+/* Mainfreight tab bar + light-red value fields */
+:root{--mf-blue:rgba(0,45,105,.62);--mf-red:rgba(255,95,115,.30);--mf-red-t:rgba(255,95,115,.45)}
+.card.tabs{background:var(--mf-blue)}
+.tab.on{background:rgba(70,130,215,.38)}
+.cf{background:var(--mf-red)}
+.cf.t{background:var(--mf-red-t);color:#fff}
 </style>
 </head>
 <body>

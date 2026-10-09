@@ -200,6 +200,7 @@ body{min-height:0}
 .hd.l{text-align:center;padding-left:2px;padding-right:2px}
 .top.top2{display:grid;grid-template-columns:1fr auto 1fr}
 .top2 span:first-child{justify-self:start}.top2 span:nth-child(2){justify-self:center}.top2 span:last-child{justify-self:end}
+.scroll.nofit{overflow-y:hidden;padding-bottom:8px}
 </style>
 </head>
 <body>
@@ -274,6 +275,7 @@ function render(){
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.t));
+  fit();
 });
 let pt='del';
 function applyQ(){const t=$('ty').value,v=$('qa').value;if(t!==pt){$(pt).value='';pt=t}$(t).value=v}
@@ -407,8 +409,9 @@ function renderRep(){
   <div class="nav"><button type="button" class="nb" data-n="-1">&#8249;</button><div class="nt">${R.t}${R.sub?`<span class="rng">${R.sub}</span>`:''}</div><button type="button" class="nb" data-n="1">&#8250;</button></div></div>
   <div class="card sec"><div class="cols"><div class="col"><small>Deliveries</small><b>${fmt(R.de)}</b></div><div class="col"><small>Pickups</small><b>${fmt(R.pu)}</b></div><div class="col"><small>Total</small><b>${fmt(R.tot)}</b></div></div></div>
   <div class="card sec">${av2}</div>
-  ${R.rows.length?`<details class="bk"><summary class="card sec">Breakdown</summary>${table(R.hd,R.rows.map((r,i)=>row(r[0],R.rl[i])).join(''))}</details>`:''}
+  ${R.rows.length?`<details class="bk"><summary class="card sec">Breakdown</summary>${table(R.hd,R.rows.map((r,i)=>row(r[0],R.rl[i])).join(''),rt==='month'?'sc w':'')}</details>`:''}
   <button class="save" type="button" id="pdfb">Download PDF</button>`;
+  fit();
 }
 
 $('rep').onclick=ev=>{
@@ -441,6 +444,19 @@ async function mkPdf(){
 }
 
 render();
+
+/* Fit Earnings tab and Reports month view to the screen (no page scroll) */
+function fit(){try{
+  const sc=document.querySelector('.scroll'),p=document.querySelector('.panel.on');
+  document.querySelectorAll('.panel').forEach(x=>x.style.zoom='');
+  const lock=p.id==='earn'||(p.id==='rep'&&rt==='month');
+  sc.classList.toggle('nofit',lock);
+  if(!lock)return;
+  const avail=sc.clientHeight-(sc.scrollHeight-p.offsetHeight)-6;
+  if(avail>0&&p.offsetHeight>avail)p.style.zoom=Math.max(.5,avail/p.offsetHeight);
+}catch(e){}}
+window.addEventListener('resize',fit);window.addEventListener('orientationchange',fit);window.addEventListener('load',fit);
+document.addEventListener('toggle',fit,true);
 </script>
 </body>
 </html>

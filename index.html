@@ -815,10 +815,10 @@ $('earn').addEventListener('click',ev=>{const b=ev.target.closest('[data-act="pa
   entries.push({d,del:0,pu:0,nm:false,x:CFG.sup,cat:'Superannuation',note:'Weekly pay'});
   persist();render();autoSync()});
 /* ===== TOOLS tab ===== */
-let tl='set';
+let tl='mgr';
 const inp=(id,v,ex)=>`<input id="${id}" value="${esc(v)}" ${ex||''}>`;
 function toolsView(){
-  const seg=['set:Setup','rem:Reminders','dat:Backup','mgr:Manager'].map(s=>{const[k,n]=s.split(':');return`<button type="button" class="seg${tl===k?' on':''}" data-tl="${k}">${n}</button>`}).join('');
+  const seg=['mgr:Manager','set:Setup','rem:Reminders','dat:Backup'].map(s=>{const[k,n]=s.split(':');return`<button type="button" class="seg${tl===k?' on':''}" data-tl="${k}">${n}</button>`}).join('');
   let b='';
   if(tl==='set')b=`<div class="card tl"><label>GST registered<select id="c_gst"><option value="1"${CFG.gst?' selected':''}>Yes</option><option value="0"${CFG.gst?'':' selected'}>No</option></select></label>
 <label>Income I enter is<select id="c_inc"><option value="ex"${CFG.incGst==='ex'?' selected':''}>Excluding GST</option><option value="inc"${CFG.incGst==='inc'?' selected':''}>Including GST</option></select></label>
@@ -969,7 +969,7 @@ function dmHtml(){
   if(!dmLoaded&&!dmBusy&&!dmMsg)setTimeout(dmLoad,0);
   const top=`<div class="segs two"><button type="button" class="seg${dmMode==='view'?' on':''}" data-dm="mode" data-v="view">View data</button><button type="button" class="seg${dmMode==='new'?' on':''}" data-dm="mode" data-v="new">New entry</button></div>`;
   let b='';
-  if(dmMode==='view')b=`<select id="dm_pick" class="dmf"><option value="">Choose a section</option>${dmSections().map(s=>`<option${s===dmPick?' selected':''}>${esc(s)}</option>`).join('')}</select><div class="dmlist" id="dm_list">${dmListHtml()}</div>`;
+  if(dmMode==='view')b=`<select id="dm_pick" class="dmf"><option value="">Choose a section</option>${dmSections().map(s=>`<option${s===dmPick?' selected':''}>${esc(s)}</option>`).join('')}</select><div class="dmlist" id="dm_list">${dmListHtml()}</div><button type="button" class="mini" data-dm="done">Done</button>`;
   else{const lb=dmLabels(),opt='<option value="">Select field</option>'+lb.map(x=>`<option>${esc(x)}</option>`).join('')+'<option value="__new">+ Add new</option>';
     b=`<div class="segs two"><button type="button" class="seg${dmSingle?' on':''}" data-dm="single" data-v="1">Single</button><button type="button" class="seg${dmSingle?'':' on'}" data-dm="single" data-v="0">Multiple</button></div>
 <input id="dm_sec" class="dmf" list="dm_secs" placeholder="Section name" autocomplete="off"><datalist id="dm_secs">${dmSections().map(s=>`<option value="${esc(s)}">`).join('')}</datalist>
@@ -992,6 +992,7 @@ $('tools').addEventListener('click',ev=>{const t=ev.target.closest('[data-dm]');
   if(t){const a=t.dataset.dm;
     if(a==='mode'){dmMode=t.dataset.v;dmShown={};toolsView()}
     else if(a==='single'){dmSingle=t.dataset.v==='1';toolsView()}
+    else if(a==='done'){dmPick='';dmShown={};dmLoaded=false;dmMsg='';toolsView()}
     else if(a==='eye'){dmShown[t.dataset.id]=!dmShown[t.dataset.id];dmPaint()}
     else if(a==='copy'){const r=dmRows.find(x=>x.id===t.dataset.id);if(r)(navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(r.value):Promise.reject()).then(()=>{t.classList.add('ok');setTimeout(()=>t.classList.remove('ok'),900)},()=>{})}
     return}

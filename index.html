@@ -399,6 +399,41 @@ html.locked .wrap{visibility:hidden}
   .rems{max-height:300px}
 }
 @media (min-width:1700px) and (min-height:520px){.wrap{max-width:1560px!important}}
+/* v5 */
+.segs.five{grid-template-columns:repeat(5,1fr);margin-bottom:0}
+#tlt.five .seg{font-size:11.5px;padding-left:0;padding-right:0}
+.cg{color:#4dff9a!important}.cr{color:#ff7a8a!important}
+.mfr{display:flex;justify-content:space-between;align-items:center;width:100%;font:inherit;color:#fff;background:rgba(70,130,215,.16);border:1px solid rgba(160,175,255,.24);border-radius:12px;padding:5px 10px;margin-top:5px;cursor:pointer;text-align:left}
+.mfr span{display:flex;flex-direction:column;gap:1px}.mfr .r{align-items:flex-end}.mfr b{font-size:13px;color:#F5D6A6}.mfr small{font-size:10.5px;color:var(--muted)}
+.bkset{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin:4px 0}.bkset input{min-width:0}
+#earn button.mini,.bkset button.mini{font:inherit;font-size:12.5px;font-weight:700;color:#fff;background:linear-gradient(180deg,#4f9fff,#2467d6);box-shadow:inset 0 0 0 1.5px rgba(245,214,166,.85);border:0;border-radius:999px;padding:8px 18px;cursor:pointer}
+.wn,.okk{font-size:12px;border-radius:10px;padding:4px 8px;margin:3px 0}
+.wn{color:#ffe2a8;background:rgba(255,176,32,.16);border:1px solid rgba(255,190,70,.5)}
+.okk{color:#bfffd8;background:rgba(77,255,154,.1);border:1px solid rgba(77,255,154,.4)}
+.fcr{display:grid;grid-template-columns:40px 1fr auto 58px;gap:6px;font-size:12px;padding:4px 0;border-top:1px solid rgba(160,175,255,.16);align-items:center}
+.fcr span:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}.fcr span:first-child{color:var(--muted)}
+.fcr b{font-weight:600}.fcr small{text-align:right;font-size:11px;color:var(--muted)}
+.mfb label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;flex-direction:row}.mfb label input{width:150px}
+.mfc{font-size:12px;color:#fff;background:rgba(70,130,215,.16);border-radius:10px;padding:6px 10px;line-height:17px}
+.rcr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:8px;align-items:center}
+.rcr input[data-f=n]{grid-column:1/3}.rcr b{grid-column:3;grid-row:1;text-align:right;cursor:pointer;color:#ff7a8a;padding-right:6px}.rcr select{grid-column:1/-1}
+.rcr select{min-width:0;max-width:none!important;width:100%}.rcr input{min-width:0;width:100%}
+.bnl{max-height:110px;overflow:auto}.bnr{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;padding:4px 0;border-top:1px solid rgba(160,175,255,.16)}
+.bnr span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bnr button.mini{padding:5px 12px!important;font-size:12px!important}
+.tv svg{width:100%;height:auto;display:block;margin-top:6px}.tms{margin-bottom:0}.tms .seg{padding:4px 0}
+.lgd{display:flex;gap:6px;align-items:center;font-size:10.5px;color:var(--muted);justify-content:center;flex-wrap:wrap}.lgd i{width:9px;height:9px;border-radius:3px;display:inline-block;margin-left:4px}
+.ts{margin-top:6px}
+.fctl{display:grid;grid-template-columns:1fr 1fr;gap:6px}.fctl input{grid-column:1/-1}.fctl input,.fctl select{min-width:0;width:100%;max-width:none}
+.fsum{font-size:11.5px;color:var(--muted);padding:5px 2px}.fsum b{color:#F5D6A6}
+.fres{overflow:auto;max-height:calc(100dvh - 380px);min-height:90px}
+.fd{display:grid;grid-template-columns:48px 1fr auto;gap:8px;width:100%;font:inherit;font-size:12.5px;color:#fff;background:none;border:0;border-top:1px solid rgba(160,175,255,.16);padding:6px 2px;text-align:left;cursor:pointer;align-items:center}
+.fd span:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fd span:first-child{color:var(--muted)}.fd b{color:#F5D6A6}
+@media (min-width:1000px) and (min-height:520px){
+  #earn.cash{grid-template-columns:1fr 1.1fr 1.2fr}#earn.cash>.card.pf{align-self:start}
+  #rep.x2>.card{grid-column:1/-1}.tv{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;align-items:start}.ts{margin-top:30px}
+  .fres{max-height:calc(100vh - 330px)}.fcr{font-size:14px;padding:6px 0}.fd{font-size:14px;padding:8px 2px}.mfr b{font-size:15px}
+  #tlt.five .seg{font-size:13px}.fcr{grid-template-columns:58px 1fr auto 76px}
+}
 </style>
 <script>try{if(JSON.parse(localStorage.getItem("lk")||"null").pin)document.documentElement.classList.add("locked")}catch(e){}</script>
 </head>
@@ -431,7 +466,7 @@ html.locked .wrap{visibility:hidden}
       </div>
       <div class="fg" id="expf" style="display:none">
         <label>Expense amount<div class="cur"><span>A$</span><input id="ex" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"></div></label>
-        <label>Expense category<select id="cat"><option>Fuel</option><option>Tolls</option><option>Parking</option><option>Tyres</option><option>Maintenance &amp; repairs</option><option>Registration &amp; CTP</option><option>Truck &amp; public liability insurance</option><option>Insurance</option><option>Truck Repayment</option><option>Car Repayment</option><option>Salary</option><option>Superannuation</option><option>Accounting fees</option><option>ASIC fees</option><option>Bank fees</option><option>Phone &amp; software</option><option>PPE &amp; uniform</option><option>Other</option></select></label>
+        <label>Expense category<select id="cat"><option>Fuel</option><option>Tolls</option><option>Parking</option><option>Tyres</option><option>Maintenance &amp; repairs</option><option>Registration &amp; CTP</option><option>Truck &amp; public liability insurance</option><option>Insurance</option><option>Truck Repayment</option><option>Car Repayment</option><option>Salary</option><option>Superannuation</option><option>Accounting fees</option><option>ASIC fees</option><option>Bank fees</option><option>Phone &amp; software</option><option>PPE &amp; uniform</option><option>PAYG withholding (ATO)</option><option>BAS / GST payment (ATO)</option><option>Company tax (ATO)</option><option>Other</option></select></label>
         <label>Note (optional)<input id="note" type="text" maxlength="60" placeholder="e.g. BP Rocklea"></label>
       </div>
       <div class="fg" id="lnf" style="display:none">
@@ -466,7 +501,7 @@ function info(ds,nm){const d=new Date(ds+'T00:00');const m=new Date(d);m.setDate
   if(nm){const t=new Date(th.getFullYear(),th.getMonth()+1,1);ym=iso(t).slice(0,7);w=1}
   y=fyOf(ym);return{ds,ym,y,w}}
 const sum=l=>{const de=l.reduce((a,e)=>a+(e.a!==undefined?e.a:(e.del||0)),0),pu=l.reduce((a,e)=>a+(e.pu||0),0);return[de,pu]};
-const sumX=l=>{let r=0,sa=0,p=0;l.forEach(e=>{if(e.x){const c=e.cat||'';if(/repayment/i.test(c))p+=e.x;else if(/^(salary|superannuation)/i.test(c))sa+=e.x;else r+=e.x}});return[r,sa,p]};
+const sumX=l=>{let r=0,sa=0,p=0;l.forEach(e=>{if(e.x){const c=e.cat||'';if(/repayment|\(ATO\)/i.test(c))p+=e.x;else if(/^(salary|superannuation)/i.test(c))sa+=e.x;else r+=e.x}});return[r,sa,p]};
 let cf='inc';
 const IH=['Deliveries','Pickups'],XH=['Running','Payroll','Repayments'];
 const row=(n,l,k,F)=>{const v=(F||sum)(l),t=v.reduce((a,b)=>a+b,0);return `<div class="dg"><div class="dn">${n}</div><i class="vd"></i>${v.map(x=>`<div class="cf">${fmt(x)}</div>`).join('')}<i class="vd"></i><div class="cf t${k?' tap':''}"${k?` data-day="${k}"`:''}>${fmt(t)}</div></div>`};
@@ -689,7 +724,7 @@ $('pop').onclick=ev=>{
   if(b.dataset.a==='edit'){closePop();startEdit(e);return}
   if(b.dataset.a==='del'){
     if(popConf!==e){popConf=e;b.textContent='Tap again to confirm';return}
-    removeEntry(e);const k=popDay,kd=popKind;render();autoSync();openDay(k,kd);
+    binPush(e);removeEntry(e);const k=popDay,kd=popKind;render();autoSync();openDay(k,kd);
   }
 };
 $('earn').onclick=ev=>{const t=ev.target.closest('[data-cf]');if(t){cf=t.dataset.cf;render();return}const c=ev.target.closest('[data-day]');if(c)openDay(c.dataset.day,cf)};
@@ -758,7 +793,7 @@ function renderRep(){
   const R=repBuild(),P=['week','month','quarter','year'],N=['Week','Month','Quarter','Year'];
   const seg=P.map((p,i)=>`<button type="button" class="seg${p===rt?' on':''}" data-r="${p}">${N[i]}</button>`).join('');
   const av2=R.A.map(a=>`<div class="ar"><span>${a[0]}</span><b>${a[1]}</b></div>`).join('');
-  const rkt=`<div class="segs two" id="rkt"><button type="button" class="seg${R.X?'':' on'}" data-k="inc">Income</button><button type="button" class="seg${R.X?' on':''}" data-k="exp">Expenses</button></div>`;
+  const rkt=`<div class="segs four" id="rkt"><button type="button" class="seg${R.X?'':' on'}" data-k="inc">Income</button><button type="button" class="seg${R.X?' on':''}" data-k="exp">Expenses</button><button type="button" class="seg" data-k="trend">Trend</button><button type="button" class="seg" data-k="find">Find</button></div>`;
   $('rep').innerHTML=rkt+`<div class="card sec"><div class="segs">${seg}</div>
   <div class="nav"><button type="button" class="nb" data-n="-1">&#8249;</button><div class="nt">${R.t}${R.sub?`<span class="rng">${R.sub}</span>`:''}</div><button type="button" class="nb" data-n="1">&#8250;</button></div></div>
   <div class="card sec"><div class="cols" style="grid-template-columns:repeat(${R.heads.length+1},1fr)">${R.heads.map((h,i)=>`<div class="col"><small>${h}</small><b>${fmt(R.v[i])}</b></div>`).join('')}<div class="col"><small>Total</small><b>${fmt(R.tot)}</b></div></div></div>
@@ -842,7 +877,7 @@ const kN=n=>(n<0?'-':'')+'A$'+Math.abs(Math.round(n)).toLocaleString('en-AU');
 const todayK=()=>iso(new Date());
 /* GST: income entered ex-GST (default) or incl-GST; expenses entered incl-GST except GST-free categories */
 function gInc(e){const a=amt(e);if(!CFG.gst)return{n:a,g:0};if(CFG.incGst==='inc'){const n=a/1.1;return{n,g:a-n}}return{n:a,g:a*.1}}
-function gExp(e){const c=e.cat||'',rep=/repayment/i.test(c),free=rep||/^(salary|superannuation|registration|asic)/i.test(c);const g=(CFG.gst&&!free)?e.x/11:0;return{n:e.x-g,g,rep}}
+function gExp(e){const c=e.cat||'',rep=/repayment|\(ATO\)/i.test(c),free=rep||/^(salary|superannuation|registration|asic)/i.test(c);const g=(CFG.gst&&!free)?e.x/11:0;return{n:e.x-g,g,rep}}
 function agg(f){let I=0,Ig=0,X=0,Xg=0;entries.forEach(e=>{if(e.ln||!f(e))return;if(e.x){const c=gExp(e);if(c.rep)return;X+=c.n;Xg+=c.g}else{const c=gInc(e);I+=c.n;Ig+=c.g}});return{I,Ig,X,Xg,P:I-X}}
 const qRange=ym=>{const Y=+ym.slice(0,4),M=+ym.slice(5),s=Math.floor((M-1)/3)*3;return[s,Y,MN[s]+'-'+MN[s+2]]};
 function proView(){
@@ -882,7 +917,7 @@ $('earn').addEventListener('click',ev=>{const b=ev.target.closest('[data-act="pa
 let tl='mgr';
 const inp=(id,v,ex)=>`<input id="${id}" value="${esc(v)}" ${ex||''}>`;
 function toolsView(){
-  const seg=['mgr:Manager','set:Setup','rem:Reminders','dat:Backup'].map(s=>{const[k,n]=s.split(':');return`<button type="button" class="seg${tl===k?' on':''}" data-tl="${k}">${n}</button>`}).join('');
+  const seg=['mgr:Manager','set:Setup','rem:Reminders','rec:Recurring','dat:Backup'].map(s=>{const[k,n]=s.split(':');return`<button type="button" class="seg${tl===k?' on':''}" data-tl="${k}">${n}</button>`}).join('');
   let b='';
   if(tl==='set')b=`<div class="card tl"><label>GST registered<select id="c_gst"><option value="1"${CFG.gst?' selected':''}>Yes</option><option value="0"${CFG.gst?'':' selected'}>No</option></select></label>
 <label>Income I enter is<select id="c_inc"><option value="ex"${CFG.incGst==='ex'?' selected':''}>Excluding GST</option><option value="inc"${CFG.incGst==='inc'?' selected':''}>Including GST</option></select></label>
@@ -896,13 +931,14 @@ function toolsView(){
 <div class="rems">${REM.map((r,i)=>`<div class="rr"><input data-ri="${i}" data-f="n" value="${esc(r.n)}" placeholder="Name"><input type="date" data-ri="${i}" data-f="d" value="${esc(r.d)}"><input type="number" inputmode="numeric" data-ri="${i}" data-f="km" value="${esc(r.km)}" placeholder="at km"><b data-del="${i}">✕</b></div>`).join('')}</div>
 <div class="hint">Add a date, a service km, or both. Items due within 30 days (or 1,000 km) show on the Cashflow tab.</div>
 <div class="two2"><button type="button" class="mini" id="b_radd">+ Add item</button><button type="button" class="mini" id="b_rics">Add to Calendar</button></div></div>`;
+  else if(tl==='rec')b=recHtml();
   else if(tl==='mgr')b=dmHtml();
   else{const fys=[];for(let y=BIZ_FY;y<=Math.max(BIZ_FY,fyOf(info(todayK()).ym));y++)fys.push(y);
     b=`<div class="card tl"><div class="pfh">Backup</div><div class="two2"><button type="button" class="mini" id="b_exp">Export backup</button><button type="button" class="mini" id="b_imp">Import backup</button></div><input type="file" id="b_file" accept=".json,application/json" style="display:none">
 <div class="pfh">Financial year pack for your accountant</div><label>Year<select id="c_fy">${fys.map(y=>`<option value="${y}">FY${String(y).slice(2)} (Jul ${y-1} - Jun ${y})</option>`).join('')}</select></label>
 <div class="two2"><button type="button" class="mini" id="b_fypdf">PDF</button><button type="button" class="mini" id="b_fycsv">CSV</button></div>
 <div class="pfh">App lock</div>${LK&&LK.pin?`<div class="hint">Lock is ON${LK.cred?' (Face ID + PIN)':' (PIN)'}. Locks after 1 minute away.</div><div class="two2">${LK.cred?'<span></span>':'<button type="button" class="mini" id="b_fid">Add Face ID</button>'}<button type="button" class="mini" id="b_lkoff">Turn off</button></div>`:`<button type="button" class="mini" id="b_lkon">Set up PIN / Face ID lock</button>`}</div>`}
-  $('tools').innerHTML=`<div class="segs four" id="tlt">${seg}</div>`+b;fit()}
+  $('tools').innerHTML=`<div class="segs five" id="tlt">${seg}</div>`+b+(tl==='dat'?binHtml():'');fit()}
 $('tools').addEventListener('click',ev=>{const t=ev.target,s=t.closest('[data-tl]');if(s){tl=s.dataset.tl;toolsView();return}
   if(t.dataset.del!==undefined){REM.splice(+t.dataset.del,1);saveCfg();toolsView();render();return}
   const id=t.id;
@@ -933,12 +969,12 @@ function icsRem(){const evs=REM.filter(r=>r.d).map((r,i)=>{const d=r.d.replace(/
   if(!evs.length){alert('Add a due date to at least one item first.');return}
   const nm='BMP-truck-reminders.ics';shareFile(new File([icsWrap(evs)],nm,{type:'text/calendar'}),nm)}
 /* ===== backup ===== */
-function expBackup(){const nm='BMP-backup-'+todayK()+'.json';shareFile(new File([JSON.stringify({app:'BMP',v:1,at:new Date().toISOString(),entries,cfg:CFG,rem:REM,odo:ODO})],nm,{type:'application/json'}),nm)}
+function expBackup(){const nm='BMP-backup-'+todayK()+'.json';shareFile(new File([JSON.stringify({app:'BMP',v:1,at:new Date().toISOString(),entries,cfg:CFG,rem:REM,odo:ODO,mf:MF,rc:RC,bk:BK})],nm,{type:'application/json'}),nm)}
 async function impBackup(f){if(!f)return;let j;try{j=JSON.parse(await f.text())}catch(e){alert('That file is not a valid BMP backup.');return}
   if(!j||j.app!=='BMP'||!Array.isArray(j.entries)){alert('That file is not a valid BMP backup.');return}
   const have=new Set(entries.map(sig)),add=j.entries.filter(e=>e&&/^\d{4}-\d\d-\d\d$/.test(e.d)&&!have.has(sig(e)));
   if(!confirm('Import '+add.length+' new entr'+(add.length===1?'y':'ies')+' and restore settings?'))return;
-  add.forEach(e=>{e.s=false;entries.push(e)});if(j.cfg)CFG=Object.assign(CFG,j.cfg);if(Array.isArray(j.rem))REM=j.rem;if(j.odo!=null)ODO=j.odo;
+  add.forEach(e=>{e.s=false;entries.push(e)});if(j.cfg)CFG=Object.assign(CFG,j.cfg);if(Array.isArray(j.rem))REM=j.rem;if(j.odo!=null)ODO=j.odo;if(j.mf)MF=Object.assign({},j.mf,MF);if(Array.isArray(j.rc)&&j.rc.length)RC=j.rc;if(j.bk)BK=Object.assign(BK,j.bk);saveX();
   saveCfg();persist();render();toolsView();autoSync();alert('Backup imported.')}
 /* ===== financial year pack ===== */
 function fyData(fy){const L=entries.filter(e=>info(e.d,e.nm).y===fy);
@@ -1073,6 +1109,134 @@ $('tools').addEventListener('input',ev=>{const t=ev.target;if(t.dataset&&t.datas
   try{const p=document.querySelector('.panel.on'),sc=document.querySelector('.scroll');let z=parseFloat(p.style.zoom)||1;
     for(let i=0;i<4&&z<1;i++){bars().forEach(b=>b.style.zoom=1/z);const o=sc.scrollHeight-sc.clientHeight;if(o<=0)break;const H=p.getBoundingClientRect().height;z=Math.max(.5,z*(H-o)/H);p.style.zoom=z}}catch(e){}
 };window.fit=fit;window.addEventListener('resize',fit)})();
+/* ===== v5: cash, invoice check, forecast, recurring, bin, trend, find ===== */
+let MF=jget('mf',{}),BK=Object.assign({adj:0},jget('bk',{})),BIN=jget('bin',[]),RC=jget('rc',null);
+if(!Array.isArray(RC))RC=[{n:'Truck repayment',cat:'Truck Repayment',amt:5000,day:2,from:'2026-11'}];
+BIN=BIN.filter(b=>Date.now()-b.at<30*864e5);
+function saveX(){jset('mf',MF);jset('bk',BK);jset('rc',RC);jset('bin',BIN)}saveX();
+const BIZ_START='2026-09-28',A=n=>fmt(n);
+const dAU=(k,o)=>new Date(k+'T00:00').toLocaleDateString('en-AU',o||{day:'numeric',month:'short'});
+const pad2=n=>String(n).padStart(2,'0');
+const nextYm=ym=>{const Y=+ym.slice(0,4),M=+ym.slice(5);return M===12?(Y+1)+'-01':Y+'-'+pad2(M+1)};
+const prevYm=ym=>{const Y=+ym.slice(0,4),M=+ym.slice(5);return M===1?(Y-1)+'-12':Y+'-'+pad2(M-1)};
+const dueOf=ym=>nextYm(ym)+'-15',ymName=ym=>MN[+ym.slice(5)-1]+' '+ym.slice(2,4);
+/* bin */
+function binPush(e){BIN.push({e:Object.assign({},e),at:Date.now()});jset('bin',BIN)}
+function binRestore(i){const b=BIN[i];if(!b)return;const e=Object.assign({},b.e),g=sig(e),k=pendingOps.findIndex(o=>o.sig===g);
+  if(k>=0){pendingOps.splice(k,1);savePops();e.s=true}else e.s=false;
+  entries.push(e);BIN.splice(i,1);jset('bin',BIN);persist();render();toolsView();autoSync()}
+function binHtml(){BIN=BIN.filter(b=>Date.now()-b.at<30*864e5);const L=BIN.map((b,i)=>[b,i]).reverse().slice(0,20);
+  return `<div class="card tl"><div class="pfh">Recently deleted · kept 30 days</div>${L.length?`<div class="bnl">${L.map(([b,i])=>{const e=b.e,t=e.ln?'Director loan':e.x?(e.cat||'Expense'):'Income',a=e.ln?Math.abs(e.ln):e.x?e.x:(e.a!==undefined?e.a:(e.del||0))+(e.pu||0);
+    return `<div class="bnr"><span>${dAU(e.d)} · ${esc(t)} · ${A(a)}</span><button type="button" class="mini" data-bin="${i}">Restore</button></div>`}).join('')}</div>`:'<div class="hint">Nothing deleted recently.</div>'}</div>`}
+/* recurring */
+function recHtml(){const cats=[...document.querySelectorAll('#cat option')].map(o=>o.value);
+  return `<div class="card tl"><div class="pfh">Recurring expenses</div><div class="rcs">${RC.map((r,i)=>`<div class="rcr"><input data-rc="${i}" data-f="n" value="${esc(r.n)}" placeholder="Name"><b data-rcdel="${i}">✕</b><select data-rc="${i}" data-f="cat">${cats.map(c=>`<option${c===r.cat?' selected':''}>${esc(c)}</option>`).join('')}</select><input data-rc="${i}" data-f="amt" type="number" inputmode="decimal" step="0.01" value="${esc(r.amt)}" placeholder="A$"><input data-rc="${i}" data-f="day" type="number" inputmode="numeric" min="1" max="28" value="${esc(r.day)}" placeholder="Day"><input data-rc="${i}" data-f="from" type="month" value="${esc(r.from)}"></div>`).join('')}</div>
+<div class="hint">On the day of the month you set (1-28), a Log button appears on the Cashflow tab. One tap adds the expense. Columns: category, amount, day, starting month.</div><button type="button" class="mini" id="b_radd2">+ Add item</button></div>`}
+function recDue(){const now=todayK(),m=now.slice(0,7),out=[];
+  RC.forEach((r,i)=>{if(!(+r.amt)||!(+r.day)||!r.cat||(r.from&&m<r.from))return;const dd=m+'-'+pad2(Math.min(28,+r.day));if(dd>now)return;
+    if(entries.some(e=>e.x&&e.cat===r.cat&&e.d.slice(0,7)===m))return;out.push({i,d:dd})});return out}
+const banners0=banners;
+banners=function(){return banners0()+recDue().map(o=>{const r=RC[o.i];return `<div class="al"><span>${esc(r.n||r.cat)} ${A(+r.amt)} due ${dAU(o.d)}</span><button type="button" data-act="rec" data-i="${o.i}" data-d="${o.d}">Log</button></div>`}).join('')};
+/* cash */
+function mfCalc(ym){const a=agg(e=>info(e.d,e.nm).ym===ym);return{ex:a.I,inc:a.I+a.Ig}}
+function mfAmt(ym){const m=MF[ym]||{};return +m.invInc>0?+m.invInc:mfCalc(ym).inc}
+function est(){let b=+BK.adj||0;Object.keys(MF).forEach(k=>{const m=MF[k];if(m&&m.recDate)b+=+m.recAmt||0});entries.forEach(e=>{if(e.x)b-=e.x;else if(e.ln)b+=e.ln});return b}
+function chk(m,c){const ex=+m.invEx||0,inc=+m.invInc||0;let d;if(ex>0)d=ex-c.ex;else if(inc>0)d=inc-c.inc;else return['Tap to add invoice',''];
+  return Math.abs(d)<.5?['✔ Matches invoice','cg']:d>0?['Missing '+A(d),'cr']:['Over by '+A(-d),'cr']}
+function forecast(){const now=todayK(),cur=info(now).ym,t0=new Date(now+'T00:00'),en=new Date(t0);en.setDate(en.getDate()+30);const ek=iso(en),ev=[];
+  for(let d=new Date(t0);d<=en;d.setDate(d.getDate()+1)){const k=iso(d);if(d.getDay()===2&&k>=PAY_START){const lo=new Date(d),hi=new Date(d);lo.setDate(lo.getDate()-3);hi.setDate(hi.getDate()+3);
+    if(!entries.some(e=>e.x&&/^salary/i.test(e.cat||'')&&e.d>=iso(lo)&&e.d<=iso(hi)))ev.push({d:k,t:'Salary + super',a:-(CFG.sal+CFG.sup)})}}
+  [cur,nextYm(cur)].forEach(m=>RC.forEach(r=>{if(!(+r.amt)||!(+r.day)||(r.from&&m<r.from))return;const dd=m+'-'+pad2(Math.min(28,+r.day));
+    if(entries.some(e=>e.x&&e.cat===r.cat&&e.d.slice(0,7)===m))return;if(dd>ek)return;if(dd<now&&m!==cur)return;ev.push({d:dd<now?now:dd,t:(r.n||r.cat)+(dd<now?' (due)':''),a:-(+r.amt)})}));
+  for(let ym=BIZ_YM;ym<=cur;ym=nextYm(ym)){const m=MF[ym]||{};if(m.recDate)continue;const due=dueOf(ym);if(due>ek)continue;ev.push({d:due<now?now:due,t:'Mainfreight '+ymName(ym)+(ym===cur?' (so far)':''),a:mfAmt(ym)})}
+  const Y=t0.getFullYear();[Y-1,Y,Y+1].forEach(y=>[3,6,9,12].forEach(q=>{const qe=y+'-'+pad2(q);if(qe<BIZ_YM)return;const due=nextYm(qe)+'-28';if(due<now||due>ek)return;
+    const qk=[qe,prevYm(qe),prevYm(prevYm(qe))],Q=agg(e=>qk.includes(info(e.d,e.nm).ym)),g=Q.Ig-Q.Xg;
+    if(g>0&&!entries.some(e=>e.x&&/BAS/i.test(e.cat||'')&&e.d>qe+'-28'))ev.push({d:due,t:'BAS (GST estimate)',a:-g})}));
+  REM.forEach(r=>{if(r.d&&r.d>=now&&r.d<=ek)ev.push({d:r.d,t:r.n,a:0})});
+  ev.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0);let bal=est(),low=null;ev.forEach(x=>{bal+=x.a;x.b=bal;if(bal<0&&!low)low=x.d});return{ev,low,end:bal}}
+const cftBar=()=>`<div class="segs four" id="cft">${[['inc','Income'],['exp','Expenses'],['pro','Profit'],['cash','Cash']].map(([k,n])=>`<button type="button" class="seg${cf===k?' on':''}" data-cf="${k}">${n}</button>`).join('')}</div>`;
+function cashView(){const now=todayK(),cur=info(now).ym,e0=est(),ms=[];for(let y=cur;y>=BIZ_YM&&ms.length<3;y=prevYm(y))ms.push(y);
+  let wait=0;for(let ym=BIZ_YM;ym<=cur;ym=nextYm(ym)){const m=MF[ym]||{};if(!m.recDate&&ym<cur)wait+=mfAmt(ym)}
+  const bank=`<div class="card pf"><div class="pfh">Bank balance · estimate</div><div class="pft big"><span>Estimated now</span><b class="${e0<0?'cr':''}">${A(e0)}</b></div><div class="pft"><span>Owed by Mainfreight (finished months)</span><b>${A(wait)}</b></div><div class="bkset"><input id="bk_in" type="number" inputmode="decimal" step="0.01" placeholder="Your real balance A$"><button type="button" class="mini" id="bk_set">Set</button></div><div class="pfn">Received pay + director loans − all expenses. Type your real bank balance and tap Set to correct the estimate.</div></div>`;
+  const pay=`<div class="card pf"><div class="pfh">Mainfreight pay · due 15th · tap to check invoice</div>${ms.map(ym=>{const m=MF[ym]||{},c=mfCalc(ym),due=dueOf(ym),k=chk(m,c),
+    st=m.recDate?`<small class="cg">Received ${dAU(m.recDate)}</small>`:due<now?'<small class="cr">Overdue</small>':`<small>Due ${dAU(due)}</small>`;
+    return `<button type="button" class="mfr" data-mf="${ym}"><span><b>${ymName(ym)}</b><small class="${k[1]}">${k[0]}</small></span><span class="r"><b>${A(mfAmt(ym))}</b>${st}</span></button>`}).join('')}</div>`;
+  const F=forecast(),sh=F.ev.slice(0,8);
+  const fc=`<div class="card pf"><div class="pfh">Next 30 days</div>${F.low?`<div class="wn">⚠ Balance may go below A$0 on ${dAU(F.low)}</div>`:`<div class="okk">✔ Balance stays above A$0 · ends ${A(F.end)}</div>`}<div class="fcl">${sh.map(x=>`<div class="fcr"><span>${dAU(x.d)}</span><span>${esc(x.t)}</span><b class="${x.a<0?'cr':x.a>0?'cg':''}">${x.a?(x.a>0?'+':'-')+kN(Math.abs(x.a)):''}</b><small class="${x.b<0?'cr':''}">${kN(x.b)}</small></div>`).join('')||'<div class="pfn">Nothing coming up.</div>'}</div>${F.ev.length>8?`<div class="pfn">+${F.ev.length-8} more</div>`:''}</div>`;
+  $('earn').innerHTML=cftBar()+banners()+bank+pay+fc}
+(function(){const r1=render;render=function(){r1();
+  if(cf==='cash')cashView();else{const c=$('cft');if(c)c.outerHTML=cftBar()}
+  $('earn').classList.toggle('cash',cf==='cash');if(rk==='find'&&$('fr'))findPaint();fit()};window.render=render})();
+$('earn').addEventListener('click',ev=>{const t=ev.target;
+  const b=t.closest('[data-act="rec"]');if(b){const r=RC[+b.dataset.i];if(r){entries.push({d:b.dataset.d,del:0,pu:0,nm:false,x:+r.amt,cat:r.cat,note:r.n||''});persist();render();autoSync()}return}
+  const m=t.closest('[data-mf]');if(m){openMf(m.dataset.mf);return}
+  if(t.id==='bk_set'){const v=parseFloat($('bk_in').value);if(isNaN(v))return;BK.adj=0;BK.adj=v-est();saveX();render()}});
+/* invoice modal */
+let mfCur=null;
+document.body.insertAdjacentHTML('beforeend',`<div class="pop" id="mfm" style="display:none"><div class="popc mfb"><h3 id="mf_t"></h3>
+<label>Invoice excl GST<input id="mf_ex" type="number" inputmode="decimal" step="0.01"></label><label>Invoice incl GST<input id="mf_in" type="number" inputmode="decimal" step="0.01"></label>
+<div class="mfc" id="mf_c"></div>
+<label>Amount received<input id="mf_ra" type="number" inputmode="decimal" step="0.01"></label><label>Date received<input id="mf_rd" type="date"></label>
+<button type="button" class="save" id="mf_save">Save invoice</button><button type="button" class="save alt" id="mf_rec">Mark received</button><button type="button" class="save alt" id="mf_undo">Undo received</button><button type="button" class="save alt" id="mf_x">Cancel</button></div></div>`);
+function mfChk(){const g=id=>{const v=parseFloat($(id).value);return isNaN(v)?0:v},c=mfCalc(mfCur),k=chk({invEx:g('mf_ex'),invInc:g('mf_in')},c);
+  $('mf_c').innerHTML=`App total: <b>${A(c.ex)}</b> excl · <b>${A(c.inc)}</b> incl<br><span class="${k[1]}">${k[0]}</span>`}
+function openMf(ym){mfCur=ym;const m=MF[ym]||{};$('mf_t').textContent='Mainfreight '+ymName(ym)+' invoice';
+  $('mf_ex').value=m.invEx||'';$('mf_in').value=m.invInc||'';$('mf_ra').value=m.recAmt||'';$('mf_rd').value=m.recDate||'';
+  $('mf_rec').style.display=m.recDate?'none':'';$('mf_undo').style.display=m.recDate?'':'none';mfChk();$('mfm').style.display='flex'}
+function mfRead(){const g=id=>{const v=parseFloat($(id).value);return isNaN(v)?0:v},m=MF[mfCur]=MF[mfCur]||{};
+  m.invEx=g('mf_ex');m.invInc=g('mf_in');if(m.invEx&&!m.invInc&&CFG.gst)m.invInc=Math.round(m.invEx*110)/100;return m}
+$('mfm').addEventListener('input',mfChk);
+$('mfm').addEventListener('click',ev=>{const t=ev.target;if(t===$('mfm')||t.id==='mf_x'){$('mfm').style.display='none';return}
+  if(t.id==='mf_save'){mfRead();}
+  else if(t.id==='mf_rec'){const m=mfRead(),ra=parseFloat($('mf_ra').value);m.recAmt=ra>0?ra:Math.round(mfAmt(mfCur)*100)/100;m.recDate=$('mf_rd').value||todayK()}
+  else if(t.id==='mf_undo'){const m=MF[mfCur]||{};delete m.recAmt;delete m.recDate}else return;
+  saveX();$('mfm').style.display='none';render()});
+/* tools: recurring + bin */
+$('tools').addEventListener('click',ev=>{const t=ev.target;
+  if(t.id==='b_radd2'){RC.push({n:'',cat:'Other',amt:'',day:1,from:todayK().slice(0,7)});saveX();toolsView();return}
+  if(t.dataset.rcdel!==undefined){RC.splice(+t.dataset.rcdel,1);saveX();toolsView();render();return}
+  if(t.dataset.bin!==undefined)binRestore(+t.dataset.bin)});
+$('tools').addEventListener('change',ev=>{const t=ev.target;if(t.dataset.rc===undefined)return;const r=RC[+t.dataset.rc],f=t.dataset.f;if(!r)return;
+  r[f]=(f==='amt'||f==='day')?(t.value===''?'':+t.value):t.value;saveX();render()});
+/* reports: trend + find */
+let tm=null,fq='',ft='all',fmn='all';
+const rkBar=()=>`<div class="segs four" id="rkt">${[['inc','Income'],['exp','Expenses'],['trend','Trend'],['find','Find']].map(([k,n])=>`<button type="button" class="seg${rk===k?' on':''}" data-k="${k}">${n}</button>`).join('')}</div>`;
+function trendHtml(){const cur=info(todayK()).ym,ms=[];for(let y=cur;y>=BIZ_YM&&ms.length<12;y=prevYm(y))ms.unshift(y);
+  if(!tm)tm=ms.length<3?'w':'m';let P=[];
+  if(tm==='m')P=ms.map(ym=>{const a=agg(e=>info(e.d,e.nm).ym===ym);return{l:MN[+ym.slice(5)-1],I:a.I,X:a.X}});
+  else{const t=new Date();t.setDate(t.getDate()-((t.getDay()+6)%7));for(let i=11;i>=0;i--){const s=new Date(t);s.setDate(t.getDate()-7*i);const en=new Date(s);en.setDate(s.getDate()+6);if(iso(en)<BIZ_START)continue;const a=agg(e=>e.d>=iso(s)&&e.d<=iso(en));P.push({l:s.getDate()+'/'+(s.getMonth()+1),I:a.I,X:a.X})}}
+  P.forEach(p=>p.P=p.I-p.X);
+  const W=340,H=150,L=8,T=14,B=18,top=Math.max(1,...P.map(p=>Math.max(p.I,p.X,p.P))),bot=Math.min(0,...P.map(p=>p.P)),y=v=>T+(H-T-B)*(top-v)/(top-bot),n=Math.max(1,P.length),sw=(W-2*L)/n,bw=Math.min(20,sw*.34);
+  let g=`<line x1="${L}" x2="${W-L}" y1="${y(0)}" y2="${y(0)}" stroke="rgba(160,175,255,.4)"/><text x="${L}" y="9" fill="#c9d4ee" font-size="9">${kc(top)}</text>`;
+  P.forEach((p,i)=>{const cx=L+sw*(i+.5);g+=`<rect x="${cx-bw-1}" y="${Math.min(y(p.I),y(0))}" width="${bw}" height="${Math.abs(y(0)-y(p.I))}" rx="2" fill="#4dff9a"/><rect x="${cx+1}" y="${Math.min(y(p.X),y(0))}" width="${bw}" height="${Math.abs(y(0)-y(p.X))}" rx="2" fill="#ff7a8a"/><text x="${cx}" y="${H-5}" fill="#c9d4ee" font-size="9" text-anchor="middle">${p.l}</text>`});
+  if(P.length>1)g+=`<polyline fill="none" stroke="#ffd76a" stroke-width="2" points="${P.map((p,i)=>(L+sw*(i+.5))+','+y(p.P)).join(' ')}"/>`;
+  P.forEach((p,i)=>g+=`<circle cx="${L+sw*(i+.5)}" cy="${y(p.P)}" r="3.2" fill="#ffd76a"/>`);
+  const tI=P.reduce((a,p)=>a+p.I,0),tX=P.reduce((a,p)=>a+p.X,0),best=P.reduce((a,p)=>!a||p.P>a.P?p:a,null),u=tm==='m'?'month':'week';
+  const none=!P.length||(!tI&&!tX);
+  return `<div class="card sec tv"><div class="tc"><div class="segs two tms"><button type="button" class="seg${tm==='w'?' on':''}" data-tm="w">Weekly</button><button type="button" class="seg${tm==='m'?' on':''}" data-tm="m">Monthly</button></div>
+${none?'<div class="rn">No data yet</div>':`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${g}</svg><div class="lgd"><i style="background:#4dff9a"></i>Income<i style="background:#ff7a8a"></i>Expenses<i style="background:#ffd76a"></i>Profit · excl GST</div>`}</div>
+<div class="ts"><div class="pft"><span>Average income per ${u}</span><b>${kN(tI/n)}</b></div><div class="pft"><span>Average expenses per ${u}</span><b>${kN(tX/n)}</b></div><div class="pft"><span>Profit margin</span><b>${tI>0?Math.round((tI-tX)/tI*100)+'%':'-'}</b></div><div class="pft big"><span>Best ${u}${best?' ('+best.l+')':''}</span><b>${best?kN(best.P):'-'}</b></div></div></div>`}
+function findHtml(){const cur=info(todayK()).ym;let last=cur;entries.forEach(e=>{const m=info(e.d,e.nm).ym;if(m>last)last=m});const ms=[];for(let y=last;y>=BIZ_YM;y=prevYm(y))ms.push(y);
+  return `<div class="card sec fnd"><div class="fctl"><input id="fq" type="search" placeholder="Search note, category, amount, date" value="${esc(fq)}" autocomplete="off"><select id="ft">${[['all','All types'],['inc','Income'],['exp','Expenses'],['loan','Director loan']].map(([k,n])=>`<option value="${k}"${ft===k?' selected':''}>${n}</option>`).join('')}</select><select id="fmn"><option value="all">All months</option>${ms.map(m=>`<option value="${m}"${fmn===m?' selected':''}>${ymName(m)}</option>`).join('')}</select></div><div class="fsum" id="fs"></div><div class="fres" id="fr"></div></div>`}
+const incAmt=e=>(e.a!==undefined?e.a:(e.del||0))+(e.pu||0);
+function findList(){const q=fq.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  return entries.filter(e=>{const ty=e.ln?'loan':e.x?'exp':'inc';if(ft!=='all'&&ft!==ty)return false;if(fmn!=='all'&&info(e.d,e.nm).ym!==fmn)return false;if(!q.length)return true;
+    const a=ty==='inc'?incAmt(e):ty==='exp'?e.x:Math.abs(e.ln),hay=[e.cat,e.note,ty==='inc'?'income delivery pickup':ty==='loan'?'director loan':'expense',a.toFixed(2),String(a),e.d,dAU(e.d)].join(' ').toLowerCase();
+    return q.every(w=>hay.includes(w))}).sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:0)}
+function findPaint(){const el=$('fr');if(!el)return;const L=findList();let i=0,o=0,l=0;L.forEach(e=>{if(e.ln)l+=e.ln;else if(e.x)o+=e.x;else i+=incAmt(e)});
+  $('fs').innerHTML=`${L.length} result${L.length===1?'':'s'} · In <b class="cg">${A(i)}</b> · Out <b class="cr">${A(o)}</b>${l?` · Loan <b>${A(l)}</b>`:''}`;
+  el.innerHTML=L.slice(0,150).map(e=>{const ix=entries.indexOf(e),d=dAU(e.d,{day:'2-digit',month:'short'});
+    const t=e.ln?'Director loan'+(e.note?' · '+esc(e.note):''):e.x?esc(e.cat||'Expense')+(e.note?' · '+esc(e.note):''):'Income · Del '+A(e.a!==undefined?e.a:(e.del||0))+' / Pick '+A(e.pu||0);
+    const am=e.ln?(e.ln<0?'-':'+')+A(Math.abs(e.ln)):e.x?'-'+A(e.x):'+'+A(incAmt(e));
+    return `<button type="button" class="fd" data-fd="${ix}"><span>${d}</span><span>${t}</span><b class="${e.x?'cr':e.ln?'':'cg'}">${am}</b></button>`}).join('')||'<div class="rn">Nothing found</div>'}
+(function(){const rr=renderRep;renderRep=function(){const tr=rk==='trend',fn=rk==='find';$('rep').classList.toggle('x2',tr||fn);
+  if(tr||fn){$('rep').innerHTML=rkBar()+(tr?trendHtml():findHtml());if(fn)findPaint();fit();return}rr()};window.renderRep=renderRep})();
+$('rep').addEventListener('click',ev=>{const t=ev.target.closest('[data-tm],[data-fd]');if(!t)return;
+  if(t.dataset.tm){tm=t.dataset.tm;renderRep();return}
+  const e=entries[+t.dataset.fd];if(e)openDay(e.d,(e.x||e.ln)?'exp':'inc')});
+$('rep').addEventListener('input',ev=>{if(ev.target.id==='fq'){fq=ev.target.value;findPaint()}});
+$('rep').addEventListener('change',ev=>{if(ev.target.id==='ft'){ft=ev.target.value;findPaint()}else if(ev.target.id==='fmn'){fmn=ev.target.value;findPaint()}});
+
 /* laptop view helpers */
 (function(){const wide=()=>matchMedia('(min-width:1000px) and (min-height:520px)').matches;
   const r0=render;render=function(){r0();$('earn').classList.toggle('pro',cf==='pro');if(wide())document.querySelectorAll('#rep details.bk').forEach(d=>d.open=true);fit()};window.render=render;

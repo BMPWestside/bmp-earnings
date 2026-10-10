@@ -349,6 +349,11 @@ html.locked .wrap{visibility:hidden}
 .tg.ln.bad b{color:#4dff9a!important}
 .dmlogo{display:block;margin:6px auto;width:100%;max-width:230px;height:auto;pointer-events:none;user-select:none}
 .tgc .tg.ln.bad.r1>span:last-child b,.tg.ln.bad b{color:#4dff9a!important}
+/* half and half, one row */
+.top.tgc{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12px!important;align-items:center!important}
+.tg.r1{grid-template-columns:auto 1fr auto!important;gap:5px!important}
+.tg.r1>span{font-size:10.5px!important}
+.top.tgc{padding:6px 10px!important;gap:9px!important}.tg.r1{gap:4px!important}.tg.r1>span{font-size:10px!important}
 </style>
 <script>try{if(JSON.parse(localStorage.getItem("lk")||"null").pin)document.documentElement.classList.add("locked")}catch(e){}</script>
 </head>
@@ -424,6 +429,7 @@ const table=(h,rows,cls,heads)=>{heads=heads||IH;return `<div class="card sec c$
 const TRUCK={price:100000,deposit:50000,monthly:5000}; /* truck bought 100k, 50k paid, 5k/month from Nov 2026 */
 const WT=5000,MT=20000; /* weekly and monthly targets (A$) */
 const dm=d=>String(d.getDate()).padStart(2,'0');const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const kc=n=>{n=Math.round(n);if(n<1000)return'A$'+n;const x=n/1000;return'A$'+(Math.round(x*10)/10).toString().replace(/\.0$/,'')+'k'};
 let sel=null;const fd=d=>d.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
 function render(){
   $('total').textContent=fmt(entries.reduce((s,e)=>s+amt(e),0));
@@ -445,7 +451,7 @@ function render(){
   const wkV=entries.filter(e=>e.d>=iso(ws)&&e.d<=iso(_w1)).reduce((a,e)=>a+amt(e),0);
   const moV=E.filter(x=>x.ym===cur.ym).reduce((a,x)=>a+amt(x.e),0);
   const tg=(l,v,t)=>{const p=Math.round(v/t*100),k=n=>'A$'+Math.round(n).toLocaleString('en-AU');
-    return `<div class="tg r1${p>=100?' hit':''}"><span>${l} <b>${p}%</b></span><div class="tgb"><i style="width:${Math.min(100,p)}%"></i></div><span>${k(v)} / ${k(t)}</span></div>`};
+    return `<div class="tg r1${p>=100?' hit':''}"><span>${l} <b>${p}%</b></span><div class="tgb"><i style="width:${Math.min(100,p)}%"></i></div><span>${kc(v)}/${kc(t).slice(2)}</span></div>`};
   const tgHtml=`<div class="card top tgc">${tg('Week',wkV,WT)}${tg('Month',moV,MT)}</div>`;
   const heads=X?XH:IH,kA=n=>'A$'+Math.round(n).toLocaleString('en-AU');
   const MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -455,7 +461,7 @@ function render(){
   }else{
     const loan=TRUCK.price-TRUCK.deposit,paid=entries.filter(e=>e.x&&/^truck repayment/i.test(e.cat||'')).reduce((a,e)=>a+e.x,0),left=Math.max(0,loan-paid),pc=Math.round(paid/loan*100);
     const lb=entries.reduce((a,e)=>a+(e.ln||0),0);
-    extra=`<div class="card top tgc"><div class="tg r1${left<=0?' hit':''}"><span>Truck loan <b>${pc}%</b></span><div class="tgb"><i style="width:${Math.min(100,pc)}%"></i></div><span><b>${kA(left)}</b> left</span></div><div class="tg r1 ln${lb<0?' bad':''}"><span>Director loan</span><div></div><span><b>${kA(Math.abs(lb))}</b></span></div></div>`}
+    extra=`<div class="card top tgc"><div class="tg r1${left<=0?' hit':''}"><span>Truck loan <b>${pc}%</b></span><div class="tgb"><i style="width:${Math.min(100,pc)}%"></i></div><span><b>${kc(left)}</b> left</span></div><div class="tg r1 ln${lb<0?' bad':''}"><span>Director loan</span><div></div><span><b>${kA(Math.abs(lb))}</b></span></div></div>`}
   const sub=`<div class="segs three" id="cft"><button type="button" class="seg${X?'':' on'}" data-cf="inc">Income</button><button type="button" class="seg${X?' on':''}" data-cf="exp">Expenses</button><button type="button" class="seg" data-cf="pro">Profit</button></div>`;
   $('earn').innerHTML=sub+extra+table('Day',dayRows,'',heads)+table('Week',weekRows,'sc w',heads)+table('Month',monthRows,'sc m',heads)+table('Year',yearRows,'sc y',heads);
   const scr=(sel,idx)=>{const el=$('earn').querySelector(sel);if(el&&el.children.length>idx&&idx>0){const k=Math.max(0,idx-1);el.scrollTop=el.children[k].offsetTop-el.children[0].offsetTop}};

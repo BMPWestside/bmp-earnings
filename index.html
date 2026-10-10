@@ -234,6 +234,12 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
 .popc .save{padding:10px;font-size:14px;width:100%}
 .tg.hit .tgb i{background:linear-gradient(90deg,#FFB300,#FFE14D);box-shadow:0 0 8px 1px rgba(255,200,0,.85)}
 .tg.hit .tgt b{color:#FFD21F;text-shadow:0 0 6px rgba(255,200,0,.6)}
+/* expenses list in Reports */
+.bk summary .exs{color:#ff9aa8;margin-left:6px}
+.xl{display:flex;flex-direction:column;gap:4px;max-height:140px;overflow-y:auto;scrollbar-width:none;padding:0 4px 6px}
+.xl::-webkit-scrollbar{display:none}
+.xr{display:grid;grid-template-columns:78px 1fr auto;gap:8px;align-items:center;font:inherit;font-size:12.5px;text-align:left;color:var(--text);background:var(--mf-red);border:1px solid var(--edge);border-radius:10px;padding:8px 10px;cursor:pointer;flex:none}
+.xr .xd{font-weight:600;white-space:nowrap}.xr .xc{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.xr b{color:#ffd0d6}
 </style>
 </head>
 <body>
@@ -263,7 +269,7 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
       </div>
       <div class="fg" id="expf" style="display:none">
         <label>Expense amount<div class="cur"><span>A$</span><input id="ex" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"></div></label>
-        <label>Expense category<select id="cat"><option>Fuel</option><option>Tolls</option><option>Parking</option><option>Maintenance &amp; repairs</option><option>Insurance</option><option>Phone</option><option>Other</option></select></label>
+        <label>Expense category<select id="cat"><option>Fuel</option><option>Tolls</option><option>Parking</option><option>Maintenance &amp; repairs</option><option>Insurance</option><option>Car Repayment</option><option>Truck Repayment</option><option>Phone</option><option>Other</option></select></label>
         <label>Note (optional)<input id="note" type="text" maxlength="60" placeholder="e.g. BP Rocklea"></label>
       </div>
       <label>Counts toward<select id="cm"><option value="">This month</option><option value="nm">1st week of next month</option></select></label>
@@ -278,7 +284,7 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
 
 <script>
 const $=id=>document.getElementById(id);
-const fmt=n=>'A$'+n.toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt=n=>(n<0?'-':'')+'A$'+Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
 let entries=[];
 try{if(localStorage.getItem('v')!=='2'){localStorage.removeItem('entries');localStorage.setItem('v','2')}entries=JSON.parse(localStorage.getItem('entries')||'[]')}catch(e){}
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -538,6 +544,7 @@ function repBuild(){
   const[de,pu]=sum(list);
   const exs=list.reduce((a,e)=>a+(e.x||0),0);A=[['Expenses',fmt(exs)],['Net profit',fmt(de+pu-exs)]].concat(A);
   RP={t,sub,de,pu,tot:de+pu,A,rows:rows.map(r=>{const[a,b]=sum(r[1]);return[r[0],a,b]})};
+  RP.ex=list.filter(e=>e.x).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0);
   RP.rl=rows.map(r=>r[1]);RP.hd={day:'Day',week:'Day',month:'Week',quarter:'Month'}[rt];
   return RP;
 }
@@ -550,6 +557,7 @@ function renderRep(){
   <div class="card sec"><div class="cols"><div class="col"><small>Deliveries</small><b>${fmt(R.de)}</b></div><div class="col"><small>Pickups</small><b>${fmt(R.pu)}</b></div><div class="col"><small>Total</small><b>${fmt(R.tot)}</b></div></div></div>
   <div class="card sec">${av2}</div>
   ${R.rows.length?`<details class="bk"><summary class="card sec">Breakdown</summary>${table(R.hd,R.rows.map((r,i)=>row(r[0],R.rl[i])).join(''),rt==='month'?'sc w':'')}</details>`:''}
+  ${R.ex.length?`<details class="bk" id="exd"><summary class="card sec"><span>Expenses (${R.ex.length}) <b class="exs">-${fmt(R.ex.reduce((a,e)=>a+e.x,0))}</b></span></summary><div class="xl">${R.ex.map((e,i)=>{const dt=new Date(e.d+'T00:00');return `<button type="button" class="xr" data-xi="${i}"><span class="xd">${dt.toLocaleDateString('en-AU',{weekday:'short'}).replace('.','')} ${String(dt.getDate()).padStart(2,'0')}-${MN[dt.getMonth()]}</span><span class="xc">${esc(e.cat||'')}${e.note?' - '+esc(e.note):''}</span><b>-${fmt(e.x)}</b></button>`}).join('')}</div></details>`:''}
   <button class="save" type="button" id="pdfb">Download PDF</button>`;
   fit();
 }
@@ -561,6 +569,7 @@ $('rep').onclick=ev=>{
   if(n){const s=+n.dataset.n,y=rc.getFullYear(),m=rc.getMonth();
     rc=rt==='day'?new Date(y,m,rc.getDate()+s):rt==='week'?new Date(y,m,rc.getDate()+7*s):rt==='month'?new Date(y,m+s,1):new Date(y,m+3*s,1);
     renderRep();return}
+  const xb=ev.target.closest('[data-xi]');if(xb){const e=RP.ex[+xb.dataset.xi];if(e)startEdit(e);return}
   if(ev.target.id==='pdfb')mkPdf();
 };
 async function mkPdf(){
@@ -578,6 +587,8 @@ async function mkPdf(){
   d.setFont('helvetica','bold');d.setFontSize(10);d.text(R.hd,15,y);d.text('Deliveries',105,y,{align:'right'});d.text('Pickups',150,y,{align:'right'});d.text('Total',195,y,{align:'right'});y+=3;d.line(15,y,195,y);y+=6;
   d.setFont('helvetica','normal');
   R.rows.forEach(r=>{d.text(String(r[0]),15,y);d.text(fmt(r[1]),105,y,{align:'right'});d.text(fmt(r[2]),150,y,{align:'right'});d.text(fmt(r[1]+r[2]),195,y,{align:'right'});y+=6.5})}
+  if(R.ex&&R.ex.length){y+=4;if(y>262){d.addPage();y=20}d.line(15,y,195,y);y+=7;d.setFont('helvetica','bold');d.setFontSize(10);d.text('Expenses',15,y);y+=6;d.setFont('helvetica','normal');
+    R.ex.forEach(e=>{if(y>280){d.addPage();y=20}d.text(e.d,15,y);d.text(String(e.cat||'')+(e.note?' - '+e.note:''),45,y);d.text('-'+fmt(e.x),195,y,{align:'right'});y+=6})}
   const nm='BMP-Earnings-'+rt+'-'+iso(rc)+'.pdf',blob=d.output('blob'),f=new File([blob],nm,{type:'application/pdf'});
   try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:nm});return}}catch(e){if(e&&e.name==='AbortError')return}
   d.save(nm);
@@ -596,7 +607,7 @@ function fit(){try{
   if(z>=.62)p.style.zoom=z;else sc.classList.remove('nofit');
 }catch(e){}}
 window.addEventListener('resize',fit);window.addEventListener('orientationchange',fit);window.addEventListener('load',fit);
-document.addEventListener('toggle',fit,true);
+document.addEventListener('toggle',ev=>{const d=ev.target;if(d.open&&d.classList&&d.classList.contains('bk'))document.querySelectorAll('#rep details.bk').forEach(o=>{if(o!==d)o.open=false});fit()},true);
 </script>
 </body>
 </html>

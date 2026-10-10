@@ -261,6 +261,8 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
 /* director loan */
 #ftabs{grid-template-columns:repeat(3,1fr)}
 .tg.ln{margin-top:7px;padding-top:6px;border-top:1px solid rgba(160,175,255,.25)}.tg.ln .tgt span:first-child{color:#fff}.tg.ln b{color:#8fd0ff}.tg.ln.bad b{color:#ff7a8a}
+.tg.ln{margin-top:0;padding-top:0;border-top:0}
+.tgs{font-size:10.5px;color:var(--muted);margin-top:4px;line-height:11px;white-space:nowrap}.tg.ln.bad .tgs{color:#ff9aa8}
 </style>
 </head>
 <body>
@@ -363,8 +365,8 @@ function render(){
     extra=tgHtml;
   }else{
     const loan=TRUCK.price-TRUCK.deposit,paid=entries.filter(e=>e.x&&/^truck repayment/i.test(e.cat||'')).reduce((a,e)=>a+e.x,0),left=Math.max(0,loan-paid),pc=Math.round(paid/loan*100);
-    const lb=entries.reduce((a,e)=>a+(e.ln||0),0),dlHtml=`<div class="tg ln${lb<0?' bad':''}"><div class="tgt"><span>Director loan</span><span><b>${lb>=0?fmt(lb)+' owed to you':fmt(-lb)+' you owe the company'}</b></span></div></div>`;
-    extra=`<div class="card top tgc one"><div class="tg${left<=0?' hit':''}"><div class="tgt"><span>Truck loan <b>${pc}% paid</b></span><span>${kA(left)} left of ${kA(loan)}</span></div><div class="tgb"><i style="width:${Math.min(100,pc)}%"></i></div></div>${dlHtml}</div>`}
+    const lb=entries.reduce((a,e)=>a+(e.ln||0),0);
+    extra=`<div class="card top tgc"><div class="tg${left<=0?' hit':''}"><div class="tgt"><span>Truck loan <b>${pc}%</b></span><span>${kA(left)} left</span></div><div class="tgb"><i style="width:${Math.min(100,pc)}%"></i></div></div><div class="tg ln${lb<0?' bad':''}"><div class="tgt"><span>Director loan</span><span><b>${kA(Math.abs(lb))}</b></span></div><div class="tgs">${lb<0?'You owe the company':'Company owes you'}</div></div></div>`}
   const sub=`<div class="segs two" id="cft"><button type="button" class="seg${X?'':' on'}" data-cf="inc">Income</button><button type="button" class="seg${X?' on':''}" data-cf="exp">Expenses</button></div>`;
   $('earn').innerHTML=sub+extra+table('Day',dayRows,'',heads)+table('Week',weekRows,'sc w',heads)+table('Month',monthRows,'sc m',heads)+table('Year',yearRows,'sc y',heads);
   const scr=(sel,idx)=>{const el=$('earn').querySelector(sel);if(el&&el.children.length>idx&&idx>0){const k=Math.max(0,idx-1);el.scrollTop=el.children[k].offsetTop-el.children[0].offsetTop}};

@@ -263,7 +263,49 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
 .tg.ln{margin-top:7px;padding-top:6px;border-top:1px solid rgba(160,175,255,.25)}.tg.ln .tgt span:first-child{color:#fff}.tg.ln b{color:#8fd0ff}.tg.ln.bad b{color:#ff7a8a}
 .tg.ln{margin-top:0;padding-top:0;border-top:0}
 .tgs{font-size:10.5px;color:var(--muted);margin-top:4px;line-height:11px;white-space:nowrap}.tg.ln.bad .tgs{color:#ff9aa8}
-.tgc .tgt span:last-child b,.tg.ln b,.tg.ln.bad b{color:#ff5c6f!important}</style>
+.tgc .tgt span:last-child b,.tg.ln b,.tg.ln.bad b{color:#ff5c6f!important}/* ===== profit, GST, banners, tools, lock ===== */
+.segs.three{grid-template-columns:repeat(3,1fr);margin-bottom:0}
+.tabs .tab{font-size:13px}
+.pf{padding:8px 12px;display:flex;flex-direction:column;gap:0}
+.pfr{display:grid;grid-template-columns:62px 1fr 1fr 1fr;gap:4px;align-items:center;padding:7px 0;border-top:1px solid rgba(160,175,255,.18);font-size:12.5px}
+.pfr:first-child{border-top:0}
+.pfr.h{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:2px 0 5px}
+.pfr>span:not(:first-child){text-align:right}
+.pfr>span:first-child{font-weight:700;color:#fff}
+.pfr .g{color:#4dff9a}.pfr .rd{color:#ff7a8a}
+.pft{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;padding:5px 0;gap:8px}
+.pft span:first-child{color:#fff}.pft b{color:#F5D6A6}
+.pft.big{border-top:1px solid rgba(160,175,255,.25);margin-top:3px;padding-top:7px;font-weight:700}
+.pft.big b{color:#ffd76a;font-size:15px}
+.pfh{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:2px}
+.pfn{font-size:10.5px;color:var(--muted);line-height:13px;padding:0 4px}
+.al{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:6px 8px 6px 12px;border-radius:14px;background:rgba(255,176,32,.16);border:1px solid rgba(255,190,70,.55);font-size:12px;color:#ffe2a8}
+.al button{font:inherit;font-size:12px;font-weight:700;color:#2a1b00;background:linear-gradient(#ffd76a,#f0a81c);border:0;border-radius:999px;padding:5px 12px;white-space:nowrap}
+.tl{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.tl label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:#fff}
+.tl input,.tl select{font:inherit;font-size:13px;color:#fff;background:rgba(70,150,255,.2);border:1px solid var(--edge);border-radius:10px;padding:6px 8px;min-width:0}
+.tl label input[type=number]{width:96px;text-align:right}
+.tl select{max-width:170px}
+.tl .hint{font-size:10.5px;color:var(--muted);line-height:13px}
+.tl button.mini,.tools-btn{font:inherit;font-size:12.5px;font-weight:600;color:#fff;background:var(--tabon);border:1px solid var(--edge);border-radius:999px;padding:8px 10px;cursor:pointer}
+.tl .two2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rems{display:flex;flex-direction:column;gap:6px;max-height:210px;overflow-y:auto;scrollbar-width:none}
+.rems::-webkit-scrollbar{display:none}
+.rr{display:grid;grid-template-columns:1fr 112px 58px 22px;gap:5px;align-items:center}
+.rr input{width:100%;padding:5px 6px;font-size:12px}
+.rr b{color:#ff7a8a;text-align:center;cursor:pointer}
+.rst{font-size:10.5px;color:#ffb3bd;grid-column:1/-1;margin-top:-3px}
+.lockov{position:fixed;inset:0;z-index:300;background:radial-gradient(circle at 50% 0,#10337a,#030c24 70%);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#fff;padding:20px}
+.lockov h2{margin:0;font-size:18px;color:#F5D6A6}
+.dots{display:flex;gap:14px}.dots i{width:14px;height:14px;border-radius:50%;border:2px solid #8fd0ff}.dots i.f{background:#8fd0ff}
+.pad{display:grid;grid-template-columns:repeat(3,72px);gap:12px}
+.pad button{height:56px;font:inherit;font-size:22px;color:#fff;background:rgba(70,150,255,.22);border:1px solid var(--edge);border-radius:18px}
+.lockov .lm{min-height:16px;font-size:12px;color:#ff9aa8}
+.lockov .lk2{font:inherit;font-size:14px;font-weight:600;color:#fff;background:none;border:0;text-decoration:underline;min-height:20px}
+html.locked .wrap{visibility:hidden}
+.card.tl label{flex-direction:row;align-items:center;justify-content:space-between;text-align:left;gap:10px}.card.tl select{max-width:190px}.card.tl .two2 button{width:100%}
+</style>
+<script>try{if(JSON.parse(localStorage.getItem("lk")||"null").pin)document.documentElement.classList.add("locked")}catch(e){}</script>
 </head>
 <body>
 <div class="wrap">
@@ -273,6 +315,7 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
     <button class="tab on" data-t="earn">Cashflow</button>
     <button class="tab" data-t="form">Entry Form<span class="bdg" id="bdg" style="display:none"></span></button>
     <button class="tab" data-t="rep">Reports</button>
+    <button class="tab" data-t="tools">Tools</button>
   </div>
 
   <div class="scroll">
@@ -281,6 +324,7 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
   <div class="panel on" id="earn"></div>
 
   <div class="panel" id="rep"></div>
+  <div class="panel" id="tools"></div>
 
   <div class="panel" id="form">
     <form class="card" id="f">
@@ -367,7 +411,7 @@ function render(){
     const loan=TRUCK.price-TRUCK.deposit,paid=entries.filter(e=>e.x&&/^truck repayment/i.test(e.cat||'')).reduce((a,e)=>a+e.x,0),left=Math.max(0,loan-paid),pc=Math.round(paid/loan*100);
     const lb=entries.reduce((a,e)=>a+(e.ln||0),0);
     extra=`<div class="card top tgc"><div class="tg${left<=0?' hit':''}"><div class="tgt"><span>Truck loan <b>${pc}%</b></span><span><b>${kA(left)}</b> left</span></div><div class="tgb"><i style="width:${Math.min(100,pc)}%"></i></div></div><div class="tg ln${lb<0?' bad':''}"><div class="tgt"><span>Director loan</span><span><b>${kA(Math.abs(lb))}</b></span></div><div class="tgs">${lb<0?'You owe the company':'Company owes you'}</div></div></div>`}
-  const sub=`<div class="segs two" id="cft"><button type="button" class="seg${X?'':' on'}" data-cf="inc">Income</button><button type="button" class="seg${X?' on':''}" data-cf="exp">Expenses</button></div>`;
+  const sub=`<div class="segs three" id="cft"><button type="button" class="seg${X?'':' on'}" data-cf="inc">Income</button><button type="button" class="seg${X?' on':''}" data-cf="exp">Expenses</button><button type="button" class="seg" data-cf="pro">Profit</button></div>`;
   $('earn').innerHTML=sub+extra+table('Day',dayRows,'',heads)+table('Week',weekRows,'sc w',heads)+table('Month',monthRows,'sc m',heads)+table('Year',yearRows,'sc y',heads);
   const scr=(sel,idx)=>{const el=$('earn').querySelector(sel);if(el&&el.children.length>idx&&idx>0){const k=Math.max(0,idx-1);el.scrollTop=el.children[k].offsetTop-el.children[0].offsetTop}};
   scr('.sc.m',mIdx);scr('.sc.y',yIdx);
@@ -689,6 +733,172 @@ function fit(){try{
 }catch(e){}}
 window.addEventListener('resize',fit);window.addEventListener('orientationchange',fit);window.addEventListener('load',fit);
 document.addEventListener('toggle',ev=>{const d=ev.target;if(d.open&&d.classList&&d.classList.contains('bk'))document.querySelectorAll('#rep details.bk').forEach(o=>{if(o!==d)o.open=false});fit()},true);
+/* ===== PROFIT / GST / TAX, PAY + REMINDER BANNERS, TOOLS, BACKUP, LOCK, FY PACK ===== */
+const PAY_START='2026-10-13';
+const jget=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k)||'null');return v==null?d:v}catch(e){return d}};
+const jset=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let CFG=Object.assign({gst:true,incGst:'ex',tax:25,sal:2146,sup:257.52},jget('cfg',{}));if(CFG.sal===1641)CFG.sal=2146;
+let REM=jget('rem',[{n:'Registration (rego)',d:'',km:''},{n:'Truck insurance',d:'',km:''},{n:'HVIS / road user charges',d:'',km:''},{n:'Truck service',d:'',km:''}]);
+let ODO=jget('odo','');
+const saveCfg=()=>{jset('cfg',CFG);jset('rem',REM);jset('odo',ODO)};
+const kN=n=>(n<0?'-':'')+'A$'+Math.abs(Math.round(n)).toLocaleString('en-AU');
+const todayK=()=>iso(new Date());
+/* GST: income entered ex-GST (default) or incl-GST; expenses entered incl-GST except GST-free categories */
+function gInc(e){const a=amt(e);if(!CFG.gst)return{n:a,g:0};if(CFG.incGst==='inc'){const n=a/1.1;return{n,g:a-n}}return{n:a,g:a*.1}}
+function gExp(e){const c=e.cat||'',rep=/repayment/i.test(c),free=rep||/^(salary|superannuation|registration|asic)/i.test(c);const g=(CFG.gst&&!free)?e.x/11:0;return{n:e.x-g,g,rep}}
+function agg(f){let I=0,Ig=0,X=0,Xg=0;entries.forEach(e=>{if(e.ln||!f(e))return;if(e.x){const c=gExp(e);if(c.rep)return;X+=c.n;Xg+=c.g}else{const c=gInc(e);I+=c.n;Ig+=c.g}});return{I,Ig,X,Xg,P:I-X}}
+const qRange=ym=>{const Y=+ym.slice(0,4),M=+ym.slice(5),s=Math.floor((M-1)/3)*3;return[s,Y,MN[s]+'-'+MN[s+2]]};
+function proView(){
+  const now=new Date(),cur=info(iso(now)),fy=fyOf(cur.ym);
+  const ws=new Date(now);ws.setDate(now.getDate()-((now.getDay()+6)%7));const we=new Date(ws);we.setDate(ws.getDate()+6);
+  const [qs,qy,ql]=qRange(cur.ym),qk=[0,1,2].map(i=>iso(new Date(qy,qs+i,1)).slice(0,7));
+  const W=agg(e=>e.d>=iso(ws)&&e.d<=iso(we)),M=agg(e=>info(e.d,e.nm).ym===cur.ym),Q=agg(e=>qk.includes(info(e.d,e.nm).ym)),Y=agg(e=>info(e.d,e.nm).y===fy);
+  const cl=n=>n<0?'rd':'g';
+  const row=(l,a)=>`<div class="pfr"><span>${l}</span><span>${kN(a.I)}</span><span>${kN(a.X)}</span><span class="${cl(a.P)}">${kN(a.P)}</span></div>`;
+  const tx=n=>Math.max(0,n)*(CFG.tax/100);
+  const gnQ=Q.Ig-Q.Xg,gnM=M.Ig-M.Xg;
+  const sub=`<div class="segs three" id="cft"><button type="button" class="seg" data-cf="inc">Income</button><button type="button" class="seg" data-cf="exp">Expenses</button><button type="button" class="seg on" data-cf="pro">Profit</button></div>`;
+  const gst=CFG.gst?`<div class="card pf"><div class="pfh">GST · BAS ${ql} ${qy}</div><div class="pft"><span>GST collected on income</span><b>${kN(Q.Ig)}</b></div><div class="pft"><span>GST credits on expenses</span><b>${kN(Q.Xg)}</b></div><div class="pft big"><span>${gnQ>=0?'GST to pay (estimate)':'GST refund (estimate)'}</span><b>${kN(Math.abs(gnQ))}</b></div></div>`:`<div class="card pf"><div class="pfh">GST</div><div class="pfn">GST is switched off. Turn it on in Tools &gt; Setup.</div></div>`;
+  const keep=tx(M.P)+(CFG.gst?Math.max(0,gnM):0);
+  const tax=`<div class="card pf"><div class="pfh">Tax set-aside · ${CFG.tax}% of profit</div><div class="pft"><span>${MN[+cur.ym.slice(5)-1]} company tax</span><b>${kN(tx(M.P))}</b></div><div class="pft"><span>FY${String(fy).slice(2)} company tax so far</span><b>${kN(tx(Y.P))}</b></div><div class="pft big"><span>Keep aside this month${CFG.gst?' (tax + GST)':''}</span><b>${kN(keep)}</b></div></div>`;
+  $('earn').innerHTML=sub+`<div class="card pf"><div class="pfr h"><span></span><span>Income</span><span>Expenses</span><span>Profit</span></div>${row('Week',W)}${row('Month',M)}${row('Quarter',Q)}${row('FY'+String(fy).slice(2),Y)}</div>`+gst+tax+`<div class="pfn">Amounts exclude GST and are before truck depreciation. Truck/car repayments and director loan money are not counted as expenses. Estimates only: confirm with your accountant.</div>`;
+}
+/* banners */
+function payDue(){const n=new Date();let t=new Date(n.getFullYear(),n.getMonth(),n.getDate(),18,0);let g=0;while((t.getDay()!==2||t>n)&&g++<9)t.setDate(t.getDate()-1);const k=iso(t);if(k<PAY_START)return null;
+  const lo=new Date(t),hi=new Date(t);lo.setDate(lo.getDate()-3);hi.setDate(hi.getDate()+3);
+  return entries.some(e=>e.x&&/^salary/i.test(e.cat||'')&&e.d>=iso(lo)&&e.d<=iso(hi))?null:k}
+function remAlerts(){const t0=new Date(todayK()+'T00:00'),out=[];
+  REM.forEach(r=>{if(r.d){const dd=Math.round((new Date(r.d+'T00:00')-t0)/864e5);if(dd<=30)out.push([dd,r.n+(dd<0?': overdue '+(-dd)+' day'+(dd<-1?'s':''):dd===0?': due today':': due in '+dd+' day'+(dd>1?'s':''))])}
+    const km=+r.km,od=+ODO;if(km&&od){const left=km-od;if(left<=1000)out.push([left<0?-999:left/100,r.n+(left<0?': overdue '+(-left)+' km':': due in '+left+' km')])}});
+  return out.sort((a,b)=>a[0]-b[0]).map(x=>x[1])}
+function banners(){let h='';const p=payDue();
+  if(p)h+=`<div class="al"><span>Salary &amp; super due ${new Date(p+'T00:00').toLocaleDateString('en-AU',{weekday:'short',day:'2-digit',month:'short'})}</span><button type="button" data-act="pay" data-d="${p}">Log ${fmt(CFG.sal+CFG.sup)}</button></div>`;
+  const r=remAlerts();if(r.length)h+=`<div class="al"><span>${r.slice(0,2).map(esc).join(' · ')}${r.length>2?' · +'+(r.length-2)+' more':''}</span></div>`;
+  return h}
+const _render=render;
+render=function(){_render();if(cf==='pro')proView();else{const b=banners(),c=$('cft');if(b&&c)c.insertAdjacentHTML('afterend',b)}fit()};
+$('earn').addEventListener('click',ev=>{const b=ev.target.closest('[data-act="pay"]');if(!b)return;const d=b.dataset.d;
+  entries.push({d,del:0,pu:0,nm:false,x:CFG.sal,cat:'Salary',note:'Weekly pay'});
+  entries.push({d,del:0,pu:0,nm:false,x:CFG.sup,cat:'Superannuation',note:'Weekly pay'});
+  persist();render();autoSync()});
+/* ===== TOOLS tab ===== */
+let tl='set';
+const inp=(id,v,ex)=>`<input id="${id}" value="${esc(v)}" ${ex||''}>`;
+function toolsView(){
+  const seg=['set:Setup','rem:Reminders','dat:Data'].map(s=>{const[k,n]=s.split(':');return`<button type="button" class="seg${tl===k?' on':''}" data-tl="${k}">${n}</button>`}).join('');
+  let b='';
+  if(tl==='set')b=`<div class="card tl"><label>GST registered<select id="c_gst"><option value="1"${CFG.gst?' selected':''}>Yes</option><option value="0"${CFG.gst?'':' selected'}>No</option></select></label>
+<label>Income I enter is<select id="c_inc"><option value="ex"${CFG.incGst==='ex'?' selected':''}>Excluding GST</option><option value="inc"${CFG.incGst==='inc'?' selected':''}>Including GST</option></select></label>
+<div class="hint">Check your Mainfreight remittance: if GST is added on top of your figures, choose Excluding. Expenses are assumed to be entered as on the receipt (including GST).</div>
+<label>Tax set-aside %<input id="c_tax" type="number" inputmode="decimal" step="0.5" value="${CFG.tax}"></label>
+<label>Weekly gross salary (A$)<input id="c_sal" type="number" inputmode="decimal" step="0.01" value="${CFG.sal}"></label>
+<label>Weekly super (A$)<input id="c_sup" type="number" inputmode="decimal" step="0.01" value="${CFG.sup}"></label>
+<div class="hint">Use gross pay (before tax). Your take-home is A$1,641, so A$505 goes to the ATO as PAYG withholding. Reminder: every Tuesday after 6:00 PM until logged.</div>
+<button type="button" class="mini" id="b_payics">Add weekly pay alert to iPhone Calendar</button></div>`;
+  else if(tl==='rem')b=`<div class="card tl"><label>Odometer now (km)<input id="c_odo" type="number" inputmode="numeric" value="${esc(ODO)}"></label>
+<div class="rems">${REM.map((r,i)=>`<div class="rr"><input data-ri="${i}" data-f="n" value="${esc(r.n)}" placeholder="Name"><input type="date" data-ri="${i}" data-f="d" value="${esc(r.d)}"><input type="number" inputmode="numeric" data-ri="${i}" data-f="km" value="${esc(r.km)}" placeholder="at km"><b data-del="${i}">✕</b></div>`).join('')}</div>
+<div class="hint">Add a date, a service km, or both. Items due within 30 days (or 1,000 km) show on the Cashflow tab.</div>
+<div class="two2"><button type="button" class="mini" id="b_radd">+ Add item</button><button type="button" class="mini" id="b_rics">Add to Calendar</button></div></div>`;
+  else{const fys=[];for(let y=BIZ_FY;y<=Math.max(BIZ_FY,fyOf(info(todayK()).ym));y++)fys.push(y);
+    b=`<div class="card tl"><div class="pfh">Backup</div><div class="two2"><button type="button" class="mini" id="b_exp">Export backup</button><button type="button" class="mini" id="b_imp">Import backup</button></div><input type="file" id="b_file" accept=".json,application/json" style="display:none">
+<div class="pfh">Financial year pack for your accountant</div><label>Year<select id="c_fy">${fys.map(y=>`<option value="${y}">FY${String(y).slice(2)} (Jul ${y-1} - Jun ${y})</option>`).join('')}</select></label>
+<div class="two2"><button type="button" class="mini" id="b_fypdf">PDF</button><button type="button" class="mini" id="b_fycsv">CSV</button></div>
+<div class="pfh">App lock</div>${LK&&LK.pin?`<div class="hint">Lock is ON${LK.cred?' (Face ID + PIN)':' (PIN)'}. Locks after 1 minute away.</div><div class="two2">${LK.cred?'<span></span>':'<button type="button" class="mini" id="b_fid">Add Face ID</button>'}<button type="button" class="mini" id="b_lkoff">Turn off</button></div>`:`<button type="button" class="mini" id="b_lkon">Set up PIN / Face ID lock</button>`}</div>`}
+  $('tools').innerHTML=`<div class="segs three" id="tlt">${seg}</div>`+b;fit()}
+$('tools').addEventListener('click',ev=>{const t=ev.target,s=t.closest('[data-tl]');if(s){tl=s.dataset.tl;toolsView();return}
+  if(t.dataset.del!==undefined){REM.splice(+t.dataset.del,1);saveCfg();toolsView();render();return}
+  const id=t.id;
+  if(id==='b_radd'){REM.push({n:'',d:'',km:''});saveCfg();toolsView();return}
+  if(id==='b_payics')icsPay();else if(id==='b_rics')icsRem();else if(id==='b_exp')expBackup();else if(id==='b_imp')$('b_file').click();
+  else if(id==='b_fypdf')fyPdf(+$('c_fy').value);else if(id==='b_fycsv')fyCsv(+$('c_fy').value);
+  else if(id==='b_lkon')showLock('new','Choose a 4-digit PIN',()=>{LK=jget('lk',null);if(window.PublicKeyCredential&&confirm('Also use Face ID to unlock?'))enrollFid().then(toolsView);else toolsView()});
+  else if(id==='b_fid')enrollFid().then(toolsView);
+  else if(id==='b_lkoff')showLock('verify','Enter PIN to turn off lock',()=>{try{localStorage.removeItem('lk')}catch(e){}LK=null;document.documentElement.classList.remove('locked');toolsView()})});
+$('tools').addEventListener('change',ev=>{const t=ev.target,id=t.id;
+  if(id==='c_gst')CFG.gst=t.value==='1';else if(id==='c_inc')CFG.incGst=t.value;
+  else if(id==='c_tax')CFG.tax=Math.max(0,Math.min(60,+t.value||0));else if(id==='c_sal')CFG.sal=+t.value||0;else if(id==='c_sup')CFG.sup=+t.value||0;
+  else if(id==='c_odo')ODO=t.value;
+  else if(t.dataset.ri!==undefined)REM[+t.dataset.ri][t.dataset.f]=t.value;
+  else if(id==='b_file'){impBackup(t.files[0]);t.value='';return}else return;
+  saveCfg();render();if(t.dataset.ri!==undefined)toolsView()});
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.t==='tools')toolsView()}));
+/* ===== calendar files ===== */
+const icsStamp=()=>new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z';
+const icsWrap=ev=>'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//BMP Earnings//EN\r\nCALSCALE:GREGORIAN\r\n'+ev.join('')+'END:VCALENDAR\r\n';
+const icsEsc=s=>String(s).replace(/[\\,;]/g,m=>'\\'+m).replace(/\n/g,'\\n');
+function icsPay(){const n=new Date();let t=new Date(n.getFullYear(),n.getMonth(),n.getDate());while(t.getDay()!==2||t<new Date(n.getFullYear(),n.getMonth(),n.getDate()))t.setDate(t.getDate()+1);
+  const d=iso(t).replace(/-/g,'');
+  const ev='BEGIN:VEVENT\r\nUID:bmp-pay@bmpwestside\r\nDTSTAMP:'+icsStamp()+'\r\nDTSTART:'+d+'T180000\r\nDURATION:PT15M\r\nRRULE:FREQ=WEEKLY;BYDAY=TU\r\nSUMMARY:'+icsEsc('Pay salary & super ('+fmt(CFG.sal+CFG.sup)+')')+'\r\nBEGIN:VALARM\r\nTRIGGER:PT0M\r\nACTION:DISPLAY\r\nDESCRIPTION:Pay salary and super\r\nEND:VALARM\r\nEND:VEVENT\r\n';
+  const nm='BMP-weekly-pay-alert.ics';shareFile(new File([icsWrap([ev])],nm,{type:'text/calendar'}),nm)}
+function icsRem(){const evs=REM.filter(r=>r.d).map((r,i)=>{const d=r.d.replace(/-/g,'');const nx=new Date(r.d+'T00:00');nx.setDate(nx.getDate()+1);
+  return 'BEGIN:VEVENT\r\nUID:bmp-rem-'+i+'-'+d+'@bmpwestside\r\nDTSTAMP:'+icsStamp()+'\r\nDTSTART;VALUE=DATE:'+d+'\r\nDTEND;VALUE=DATE:'+iso(nx).replace(/-/g,'')+'\r\nSUMMARY:'+icsEsc(r.n||'Truck reminder')+'\r\nBEGIN:VALARM\r\nTRIGGER:-P14D\r\nACTION:DISPLAY\r\nDESCRIPTION:'+icsEsc(r.n||'Truck reminder')+' in 2 weeks\r\nEND:VALARM\r\nBEGIN:VALARM\r\nTRIGGER:-P1D\r\nACTION:DISPLAY\r\nDESCRIPTION:'+icsEsc(r.n||'Truck reminder')+' tomorrow\r\nEND:VALARM\r\nEND:VEVENT\r\n'});
+  if(!evs.length){alert('Add a due date to at least one item first.');return}
+  const nm='BMP-truck-reminders.ics';shareFile(new File([icsWrap(evs)],nm,{type:'text/calendar'}),nm)}
+/* ===== backup ===== */
+function expBackup(){const nm='BMP-backup-'+todayK()+'.json';shareFile(new File([JSON.stringify({app:'BMP',v:1,at:new Date().toISOString(),entries,cfg:CFG,rem:REM,odo:ODO})],nm,{type:'application/json'}),nm)}
+async function impBackup(f){if(!f)return;let j;try{j=JSON.parse(await f.text())}catch(e){alert('That file is not a valid BMP backup.');return}
+  if(!j||j.app!=='BMP'||!Array.isArray(j.entries)){alert('That file is not a valid BMP backup.');return}
+  const have=new Set(entries.map(sig)),add=j.entries.filter(e=>e&&/^\d{4}-\d\d-\d\d$/.test(e.d)&&!have.has(sig(e)));
+  if(!confirm('Import '+add.length+' new entr'+(add.length===1?'y':'ies')+' and restore settings?'))return;
+  add.forEach(e=>{e.s=false;entries.push(e)});if(j.cfg)CFG=Object.assign(CFG,j.cfg);if(Array.isArray(j.rem))REM=j.rem;if(j.odo!=null)ODO=j.odo;
+  saveCfg();persist();render();toolsView();autoSync();alert('Backup imported.')}
+/* ===== financial year pack ===== */
+function fyData(fy){const L=entries.filter(e=>info(e.d,e.nm).y===fy);
+  const months=[];for(let i=0;i<12;i++){const mm=(6+i)%12,yy=i<6?fy-1:fy,k=yy+'-'+String(mm+1).padStart(2,'0');if(k<BIZ_YM)continue;months.push([MN[mm]+' '+yy,agg(e=>info(e.d,e.nm).ym===k)])}
+  const T=agg(e=>info(e.d,e.nm).y===fy),cats={},reps={};let sal=0,sup=0,truck=0;
+  L.forEach(e=>{if(!e.x)return;const c=e.cat||'Other',g=gExp(e),o=g.rep?reps:cats;(o[c]=o[c]||{t:0,g:0,n:0});o[c].t+=e.x;o[c].g+=g.g;o[c].n+=g.n;if(/^salary/i.test(c))sal+=e.x;if(/^superannuation/i.test(c))sup+=e.x;if(/^truck repayment/i.test(c))truck+=e.x});
+  const dl=entries.reduce((a,e)=>a+(e.ln||0),0),tp=entries.filter(e=>e.x&&/^truck repayment/i.test(e.cat||'')).reduce((a,e)=>a+e.x,0);
+  return{fy,months,T,cats:Object.entries(cats).sort((a,b)=>b[1].t-a[1].t),reps:Object.entries(reps),sal,sup,truck,dl,left:Math.max(0,TRUCK.price-TRUCK.deposit-tp),tax:Math.max(0,T.P)*CFG.tax/100}}
+function fyCsv(fy){const D=fyData(fy),q=v=>{v=String(v==null?'':v);return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v},f2=n=>(+n).toFixed(2),R=[];
+  R.push(['BMP Earnings - Financial year FY'+String(fy).slice(2)+' (1 Jul '+(fy-1)+' - 30 Jun '+fy+')']);R.push(['GST registered',CFG.gst?'Yes':'No']);R.push([]);
+  R.push(['Month','Income (ex GST)','GST collected','Expenses (ex GST)','GST credits','Profit before depreciation']);
+  D.months.forEach(m=>R.push([m[0],f2(m[1].I),f2(m[1].Ig),f2(m[1].X),f2(m[1].Xg),f2(m[1].P)]));
+  R.push(['Total',f2(D.T.I),f2(D.T.Ig),f2(D.T.X),f2(D.T.Xg),f2(D.T.P)]);R.push([]);
+  R.push(['Expense category','Total paid','GST included','Ex GST']);D.cats.forEach(c=>R.push([c[0],f2(c[1].t),f2(c[1].g),f2(c[1].n)]));R.push([]);
+  R.push(['Loan repayments (not expenses)','Paid']);D.reps.forEach(c=>R.push([c[0],f2(c[1].t)]));R.push([]);
+  R.push(['Salary paid',f2(D.sal)]);R.push(['Superannuation paid',f2(D.sup)]);R.push(['Net GST for the year (collected - credits)',f2(D.T.Ig-D.T.Xg)]);
+  R.push(['Profit before depreciation',f2(D.T.P)]);R.push(['Depreciation (accountant to enter)','']);R.push(['Company tax set-aside at '+CFG.tax+'%',f2(D.tax)]);
+  R.push(['Truck loan paid this year',f2(D.truck)]);R.push(['Truck loan remaining (today)',f2(D.left)]);R.push(['Director loan balance today (+ company owes you)',f2(D.dl)]);
+  const nm='BMP-FY'+String(fy).slice(2)+'-accountant-pack.csv';shareFile(new File(['﻿'+R.map(r=>r.map(q).join(',')).join('\r\n')],nm,{type:'text/csv'}),nm)}
+async function fyPdf(fy){const J=window.jspdf;if(!J){alert('PDF tool is still loading. Check your internet and try again.');return}
+  const D=fyData(fy),d=new J.jsPDF({unit:'mm',format:'a4'});let y=18;
+  const pg=n=>{if(y+n>284){d.addPage();y=18}},tx=(a,b,c,bold)=>{pg(7);d.setFont('helvetica',bold?'bold':'normal');d.setFontSize(10);d.text(String(a),15,y);if(b!==undefined)d.text(String(b),c||195,y,{align:'right'});y+=6};
+  const row5=(r,bold)=>{pg(7);d.setFont('helvetica',bold?'bold':'normal');d.setFontSize(9);d.text(String(r[0]),15,y);[70,100,130,160,195].forEach((x,i)=>d.text(String(r[i+1]),x,y,{align:'right'}));y+=6};
+  d.setFont('helvetica','bold');d.setFontSize(17);d.text('BMP Financial Year Pack FY'+String(fy).slice(2),15,y);y+=7;
+  d.setFont('helvetica','normal');d.setFontSize(10);d.text('1 Jul '+(fy-1)+' - 30 Jun '+fy+'  |  GST registered: '+(CFG.gst?'Yes':'No')+'  |  Generated '+new Date().toLocaleDateString('en-AU'),15,y);y+=4;d.line(15,y,195,y);y+=7;
+  row5(['Month','Income','GST in','Expenses','GST credit','Profit'],true);d.line(15,y-3,195,y-3);
+  D.months.forEach(m=>row5([m[0],fmt(m[1].I),fmt(m[1].Ig),fmt(m[1].X),fmt(m[1].Xg),fmt(m[1].P)]));row5(['Total',fmt(D.T.I),fmt(D.T.Ig),fmt(D.T.X),fmt(D.T.Xg),fmt(D.T.P)],true);y+=4;
+  tx('Expense category','Total paid',130,true);tx('','GST incl.',160);y-=6;d.text('Ex GST',195,y,{align:'right'});y+=6;
+  D.cats.forEach(c=>{pg(7);d.setFont('helvetica','normal');d.setFontSize(9);d.text(c[0],15,y);d.text(fmt(c[1].t),130,y,{align:'right'});d.text(fmt(c[1].g),160,y,{align:'right'});d.text(fmt(c[1].n),195,y,{align:'right'});y+=6});y+=3;
+  if(D.reps.length){tx('Loan repayments (not expenses)','',195,true);D.reps.forEach(c=>tx(c[0],fmt(c[1].t)));y+=3}
+  tx('Salary paid',fmt(D.sal));tx('Superannuation paid',fmt(D.sup));tx('Net GST for the year',fmt(D.T.Ig-D.T.Xg));
+  tx('Profit before depreciation',fmt(D.T.P),195,true);tx('Depreciation (accountant to enter)','________');tx('Company tax set-aside at '+CFG.tax+'%',fmt(D.tax));
+  tx('Truck loan paid this year',fmt(D.truck));tx('Truck loan remaining today',fmt(D.left));tx('Director loan balance today',fmt(D.dl));
+  const nm='BMP-FY'+String(fy).slice(2)+'-accountant-pack.pdf';await shareFile(new File([d.output('blob')],nm,{type:'application/pdf'}),nm)}
+/* ===== app lock (PIN + optional Face ID) ===== */
+let LK=jget('lk',null),lkMode='unlock',lkBuf='',lkTmp='',lkCb=null,hiddenAt=0;
+async function hashPin(p){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('bmp:'+p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){let h=5381;for(const c of 'bmp:'+p)h=((h<<5)+h+c.charCodeAt(0))|0;return'x'+h}}
+const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u))),unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+document.body.insertAdjacentHTML('beforeend','<div class="lockov" id="lockov"><h2 id="lkt"></h2><div class="dots" id="lkd"></div><div class="lm" id="lkm"></div><div class="pad" id="lkp">'+[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>k===''?'<span></span>':'<button type="button" data-k="'+k+'">'+k+'</button>').join('')+'</div><button type="button" class="lk2" id="lkf" style="display:none">Unlock with Face ID</button><button type="button" class="lk2" id="lkc" style="display:none">Cancel</button></div>');
+function lkDraw(){$('lkd').innerHTML=[0,1,2,3].map(i=>'<i class="'+(i<lkBuf.length?'f':'')+'"></i>').join('')}
+function showLock(mode,title,cb){lkMode=mode;lkBuf='';lkTmp='';lkCb=cb||null;$('lkt').textContent=title||'Enter PIN';$('lkm').textContent='';lkDraw();
+  $('lkf').style.display=(mode==='unlock'&&LK&&LK.cred&&window.PublicKeyCredential)?'block':'none';$('lkc').style.display=mode==='unlock'?'none':'block';$('lockov').style.display='flex'}
+const hideLock=()=>{$('lockov').style.display='none';document.documentElement.classList.remove('locked')};
+$('lkc').onclick=()=>{$('lockov').style.display='none'};
+$('lkp').onclick=async ev=>{const b=ev.target.closest('[data-k]');if(!b)return;const k=b.dataset.k;
+  if(k==='⌫')lkBuf=lkBuf.slice(0,-1);else if(lkBuf.length<4)lkBuf+=k;lkDraw();if(lkBuf.length<4)return;
+  const h=await hashPin(lkBuf),pin=lkBuf;lkBuf='';
+  if(lkMode==='new'){lkTmp=pin;lkMode='new2';$('lkt').textContent='Confirm PIN';lkDraw();return}
+  if(lkMode==='new2'){if(pin!==lkTmp){lkMode='new';$('lkt').textContent='Choose a 4-digit PIN';$('lkm').textContent='PINs did not match. Try again.';lkDraw();return}
+    LK={pin:h,cred:null};jset('lk',LK);hideLock();const cb=lkCb;if(cb)cb();return}
+  if(h!==(LK&&LK.pin)){$('lkm').textContent='Wrong PIN';lkDraw();return}
+  hideLock();if(lkCb)lkCb()};
+async function enrollFid(){try{const c=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:'BMP Earnings'},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:'owner',displayName:'BMP owner'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},timeout:60000}});
+  if(c){LK.cred=b64(c.rawId);jset('lk',LK)}}catch(e){alert('Face ID could not be set up on this device. Your PIN lock still works.')}}
+$('lkf').onclick=async()=>{try{await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),allowCredentials:[{type:'public-key',id:unb64(LK.cred)}],userVerification:'required',timeout:60000}});hideLock()}catch(e){$('lkm').textContent='Face ID failed. Use your PIN.'}};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)hiddenAt=Date.now();else if(LK&&LK.pin&&hiddenAt&&Date.now()-hiddenAt>60000&&$('lockov').style.display!=='flex'){document.documentElement.classList.add('locked');showLock('unlock','Enter PIN')}});
+if(LK&&LK.pin)showLock('unlock','Enter PIN');else document.documentElement.classList.remove('locked');
+render();
 </script>
 </body>
 </html>

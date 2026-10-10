@@ -258,6 +258,9 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
 .dl2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 /* Reports: expense summary rows show 4, rest scroll */
 .arl.sx{max-height:104px;overflow-y:auto;scrollbar-width:none}.arl.sx::-webkit-scrollbar{display:none}
+/* director loan */
+#ftabs{grid-template-columns:repeat(3,1fr)}
+.tg.ln{margin-top:7px;padding-top:6px;border-top:1px solid rgba(160,175,255,.25)}.tg.ln .tgt span:first-child{color:#fff}.tg.ln b{color:#8fd0ff}.tg.ln.bad b{color:#ff7a8a}
 </style>
 </head>
 <body>
@@ -279,7 +282,7 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
 
   <div class="panel" id="form">
     <form class="card" id="f">
-      <div class="segs two" id="ftabs"><button type="button" class="seg on" data-m="inc">Income</button><button type="button" class="seg" data-m="exp">Expense</button></div>
+      <div class="segs two" id="ftabs"><button type="button" class="seg on" data-m="inc">Income</button><button type="button" class="seg" data-m="exp">Expense</button><button type="button" class="seg" data-m="loan">Director loan</button></div>
       <label>Day and Date<div class="row2"><input id="day" type="text" readonly><input id="date" type="date" required></div></label>
       <div class="fg" id="incf">
         <label>Deliveries<div class="cur"><span>A$</span><input id="del" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"></div></label>
@@ -290,7 +293,12 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
         <label>Expense category<select id="cat"><option>Fuel</option><option>Tolls</option><option>Parking</option><option>Tyres</option><option>Maintenance &amp; repairs</option><option>Registration &amp; CTP</option><option>Truck &amp; public liability insurance</option><option>Insurance</option><option>Truck Repayment</option><option>Car Repayment</option><option>Salary</option><option>Superannuation</option><option>Accounting fees</option><option>ASIC fees</option><option>Bank fees</option><option>Phone &amp; software</option><option>PPE &amp; uniform</option><option>Other</option></select></label>
         <label>Note (optional)<input id="note" type="text" maxlength="60" placeholder="e.g. BP Rocklea"></label>
       </div>
-      <label>Counts toward<select id="cm"><option value="">This month</option><option value="nm">1st week of next month</option></select></label>
+      <div class="fg" id="lnf" style="display:none">
+        <label>Direction<select id="lnd"><option value="in">Money in - I lent to the company</option><option value="out">Money out - company repaid me</option></select></label>
+        <label>Loan amount<div class="cur"><span>A$</span><input id="lna" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"></div></label>
+        <label>Note (optional)<input id="lnn" type="text" maxlength="60" placeholder="e.g. Transfer to business account"></label>
+      </div>
+      <label id="cml">Counts toward<select id="cm"><option value="">This month</option><option value="nm">1st week of next month</option></select></label>
       <button class="save" type="submit" id="sv">Save Entry</button>
       <button class="save alt" type="button" id="cn" style="display:none">Cancel edit</button>
       <div class="msg" id="msg"></div>
@@ -335,7 +343,7 @@ function render(){
   const _we=new Date(ws.getTime()+4*864e5);
   $('bLeft').textContent=now.toLocaleDateString('en-AU',{weekday:'short'}).replace('.','')+' '+String(now.getDate()).padStart(2,'0')+'-'+MN[now.getMonth()]+'-'+now.getFullYear();
   $('bWeek').textContent='Week-'+cur.w+' ('+dm(ws)+'-'+dm(_we)+')';
-  const X=cf==='exp',F=X?sumX:sum,has=e=>X?!!e.x:!e.x,R=(n,l,k)=>row(n,l,k,F);
+  const X=cf==='exp',F=X?sumX:sum,has=e=>X?(!!e.x||!!e.ln):(!e.x&&!e.ln),R=(n,l,k)=>row(n,l,k,F);
   const dayRows=['MON','TUE','WED','THU','FRI','SAT','SUN'].map((n,i)=>{const dt=new Date(ws);dt.setDate(ws.getDate()+i);const k=iso(dt);if(i>4&&!entries.some(e=>e.d===k&&has(e))&&k!==iso(now))return '';return R(n,entries.filter(e=>e.d===k),k)}).join('');
   const weekRows=[1,2,3,4,5].map(n=>R('Week '+n,E.filter(x=>x.ym===cur.ym&&x.w===n).map(x=>x.e))).join('');
   const fy=fyOf(cur.ym);let monthRows='',mIdx=0,mN=0;
@@ -355,7 +363,8 @@ function render(){
     extra=tgHtml;
   }else{
     const loan=TRUCK.price-TRUCK.deposit,paid=entries.filter(e=>e.x&&/^truck repayment/i.test(e.cat||'')).reduce((a,e)=>a+e.x,0),left=Math.max(0,loan-paid),pc=Math.round(paid/loan*100);
-    extra=`<div class="card top tgc one"><div class="tg${left<=0?' hit':''}"><div class="tgt"><span>Truck loan <b>${pc}% paid</b></span><span>${kA(left)} left of ${kA(loan)}</span></div><div class="tgb"><i style="width:${Math.min(100,pc)}%"></i></div></div></div>`}
+    const lb=entries.reduce((a,e)=>a+(e.ln||0),0),dlHtml=`<div class="tg ln${lb<0?' bad':''}"><div class="tgt"><span>Director loan</span><span><b>${lb>=0?fmt(lb)+' owed to you':fmt(-lb)+' you owe the company'}</b></span></div></div>`;
+    extra=`<div class="card top tgc one"><div class="tg${left<=0?' hit':''}"><div class="tgt"><span>Truck loan <b>${pc}% paid</b></span><span>${kA(left)} left of ${kA(loan)}</span></div><div class="tgb"><i style="width:${Math.min(100,pc)}%"></i></div></div>${dlHtml}</div>`}
   const sub=`<div class="segs two" id="cft"><button type="button" class="seg${X?'':' on'}" data-cf="inc">Income</button><button type="button" class="seg${X?' on':''}" data-cf="exp">Expenses</button></div>`;
   $('earn').innerHTML=sub+extra+table('Day',dayRows,'',heads)+table('Week',weekRows,'sc w',heads)+table('Month',monthRows,'sc m',heads)+table('Year',yearRows,'sc y',heads);
   const scr=(sel,idx)=>{const el=$('earn').querySelector(sel);if(el&&el.children.length>idx&&idx>0){const k=Math.max(0,idx-1);el.scrollTop=el.children[k].offsetTop-el.children[0].offsetTop}};
@@ -405,7 +414,7 @@ const savePops=()=>{try{localStorage.setItem('pops',JSON.stringify(pendingOps))}
 function updBadge(){const b=$('bdg');if(!b)return;const n=entries.filter(e=>!e.s).length+pendingOps.length;b.textContent=n;b.style.display=n?'inline-block':'none'}
 const persist=()=>{try{localStorage.setItem('entries',JSON.stringify(entries))}catch(x){}updBadge()};
 const r2=v=>Math.round((+v||0)*100)/100;
-const sig=e=>[e.d,r2(e.a!==undefined?e.a:e.del),r2(e.pu),e.nm?1:0,r2(e.x),e.cat||'',e.note||''].join('|');
+const sig=e=>[e.d,r2(e.a!==undefined?e.a:e.del),r2(e.pu),e.nm?1:0,r2(e.x),e.cat||'',e.note||'',r2(e.ln)].join('|');
 const num=x=>parseFloat(String(x==null?'':x).replace(/[^0-9.\-]/g,''))||0;
 function parseRow(v){
   const m=String(v[0]||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
@@ -413,19 +422,20 @@ function parseRow(v){
   if(!d)return null;
   const e={d,del:num(v[2]),pu:num(v[3]),nm:/^next/i.test(String(v[5]||'')),s:true};
   const x=num(v[6]);if(x){e.x=x;e.cat=String(v[7]||'');e.note=String(v[8]||'')}
+  const ln=num(v[9]);if(ln){e.ln=ln;e.note=String(v[8]||'')}
   return e}
 let hdrDone=false;
 async function ensureHdr(){if(hdrDone)return;
-  const r=await mcp.callTool('Google Sheets','get_values',{spreadsheetId:SID,range:'Untitled!G1:I1'});
+  const r=await mcp.callTool('Google Sheets','get_values',{spreadsheetId:SID,range:'Untitled!G1:J1'});
   const v=((r.payload&&r.payload.values)||[])[0]||[];
-  if(!v.length)await mcp.callTool('Google Sheets','update_values',{spreadsheetId:SID,range:'Untitled!G1:I1',values:[['Expenses','Expense category','Note']]});
+  if(v.length<4)await mcp.callTool('Google Sheets','update_values',{spreadsheetId:SID,range:'Untitled!G1:J1',values:[['Expenses','Expense category','Note','Director loan']]});
   hdrDone=true}
 let flushing=false;
 async function flushOps(){
   if(!pendingOps.length)return true;
   if(flushing)return false;flushing=true;
   try{
-    const r=await mcp.callTool('Google Sheets','get_values',{spreadsheetId:SID,range:'Untitled!A2:I5000'});
+    const r=await mcp.callTool('Google Sheets','get_values',{spreadsheetId:SID,range:'Untitled!A2:J5000'});
     const vals=(r.payload&&r.payload.values)||[];
     const sigs=vals.map(v=>{const e=parseRow(v);return e?sig(e):null});
     const used=new Set(),idx=[];
@@ -438,7 +448,7 @@ async function flushOps(){
 async function loadSheet(){
   try{
     if(pendingOps.length&&!(await flushOps()))return;
-    const r=await mcp.callTool('Google Sheets','get_values',{spreadsheetId:SID,range:'Untitled!A2:I5000'});
+    const r=await mcp.callTool('Google Sheets','get_values',{spreadsheetId:SID,range:'Untitled!A2:J5000'});
     const vals=(r.payload&&r.payload.values)||[];
     const es=editing?sig(editing):null;
     entries=vals.map(parseRow).filter(Boolean).concat(entries.filter(e=>!e.s));
@@ -448,12 +458,12 @@ async function loadSheet(){
 }
 async function sync(list){
   if(!list.length)return;
-  const rows=list.map(e=>{const de=e.a!==undefined?e.a:(e.del||0),pu=e.pu||0;return[e.d,dayName(e.d),de,pu,de+pu,e.nm?'Next month':'',e.x||'',e.cat||'',e.note||'']});
+  const rows=list.map(e=>{const de=e.a!==undefined?e.a:(e.del||0),pu=e.pu||0;return[e.d,dayName(e.d),de,pu,de+pu,e.nm?'Next month':'',e.x||'',e.cat||'',e.note||'',e.ln||'']});
   try{
-    if(list.some(e=>e.x)){try{await ensureHdr()}catch(x){if(x&&x.code)throw x}}
+    if(list.some(e=>e.x||e.ln)){try{await ensureHdr()}catch(x){if(x&&x.code)throw x}}
     await mcp.callTool('Google Sheets','append_values',{spreadsheetId:SID,range:'Untitled!A1',values:rows});
     list.forEach(e=>e.s=true);persist();
-    try{await mcp.callTool('Google Sheets','update_spreadsheet',{spreadsheetId:SID,requests:[{sortRange:{range:{sheetId:1413484601,startRowIndex:1,startColumnIndex:0,endColumnIndex:9},sortSpecs:[{dimensionIndex:0,sortOrder:'ASCENDING'}]}}]})}catch(x){}
+    try{await mcp.callTool('Google Sheets','update_spreadsheet',{spreadsheetId:SID,requests:[{sortRange:{range:{sheetId:1413484601,startRowIndex:1,startColumnIndex:0,endColumnIndex:10},sortSpecs:[{dimensionIndex:0,sortOrder:'ASCENDING'}]}}]})}catch(x){}
   }catch(err){
     const c=err&&err.code;
     if(c==='needs_reauth')say('Saved on this device. Tap Sign in with Google to sync.');
@@ -481,16 +491,17 @@ setInterval(()=>{autoSync()},45000);
 
 let editing=null,fm='inc';
 const showTab=t=>document.querySelector('.tab[data-t='+t+']').click();
-function setMode(m){fm=m;$('incf').style.display=m==='inc'?'flex':'none';$('expf').style.display=m==='exp'?'flex':'none';
+function setMode(m){fm=m;$('incf').style.display=m==='inc'?'flex':'none';$('expf').style.display=m==='exp'?'flex':'none';$('lnf').style.display=m==='loan'?'flex':'none';$('cml').style.display=m==='loan'?'none':'';
   document.querySelectorAll('#ftabs .seg').forEach(b=>b.classList.toggle('on',b.dataset.m===m));fit()}
 $('ftabs').onclick=ev=>{const b=ev.target.closest('[data-m]');if(b&&!editing)setMode(b.dataset.m)};
 function setEdit(e){editing=e;$('sv').textContent=e?'Update Entry':'Save Entry';$('cn').style.display=e?'block':'none';$('ftabs').classList.toggle('lock',!!e)}
-function clearForm(){['del','pu','ex','note'].forEach(i=>$(i).value='');$('cm').value='';$('cat').selectedIndex=0;setMode('inc')}
+function clearForm(){['del','pu','ex','note','lna','lnn'].forEach(i=>$(i).value='');$('lnd').value='in';$('cm').value='';$('cat').selectedIndex=0;setMode('inc')}
 function startEdit(e){
   clearForm();setEdit(e);$('date').value=e.d;setDay();
   if(e.x){setMode('exp');$('ex').value=e.x;
     if(e.cat&&![...$('cat').options].some(o=>o.value===e.cat)){const o=document.createElement('option');o.textContent=e.cat;$('cat').appendChild(o)}
     if(e.cat)$('cat').value=e.cat;$('note').value=e.note||''}
+  else if(e.ln){setMode('loan');$('lnd').value=e.ln<0?'out':'in';$('lna').value=Math.abs(e.ln);$('lnn').value=e.note||''}
   else{$('del').value=(e.a!==undefined?e.a:e.del)||'';$('pu').value=e.pu||''}
   $('cm').value=e.nm?'nm':'';
   say('Editing entry. Change it, then tap Update Entry.');
@@ -502,7 +513,9 @@ $('cn').onclick=()=>{clearForm();setEdit(null);say('');showTab('earn')};
 $('f').onsubmit=ev=>{
   ev.preventDefault();
   const d=$('date').value,nm=$('cm').value==='nm';let en;
-  if(fm==='exp'){const x=parseFloat($('ex').value)||0;if(!(x>0)){say('Enter an expense amount.');return}
+  if(fm==='loan'){const a=parseFloat($('lna').value)||0;if(!(a>0)){say('Enter a loan amount.');return}
+    en={d,del:0,pu:0,nm:false,ln:$('lnd').value==='out'?-a:a,note:$('lnn').value.trim()}}
+  else if(fm==='exp'){const x=parseFloat($('ex').value)||0;if(!(x>0)){say('Enter an expense amount.');return}
     en={d,del:0,pu:0,nm,x,cat:$('cat').value,note:$('note').value.trim()}}
   else{if($('del').value===''&&$('pu').value===''){say('Enter deliveries or pickups.');return}
     en={d,del:parseFloat($('del').value)||0,pu:parseFloat($('pu').value)||0,nm}}
@@ -517,9 +530,9 @@ let popDay=null,popConf=null,popKind='inc';
 function openDay(k,kind){
   popDay=k;popConf=null;popKind=kind||'inc';const dt=new Date(k+'T00:00');
   $('pt').textContent=dt.toLocaleDateString('en-AU',{weekday:'long'})+' '+String(dt.getDate()).padStart(2,'0')+'-'+MN[dt.getMonth()]+'-'+dt.getFullYear();
-  const L=entries.filter(e=>e.d===k&&(popKind==='exp'?e.x:!e.x));
+  const L=entries.filter(e=>e.d===k&&(popKind==='exp'?(e.x||e.ln):(!e.x&&!e.ln)));
   $('pl').innerHTML=(L.length?L.map(e=>{const i=entries.indexOf(e),de=e.a!==undefined?e.a:(e.del||0),pu=e.pu||0;
-    const lab=e.x?`<span>Expense: ${esc(e.cat||'')}${e.note?' - '+esc(e.note):''}</span><b class="neg">-${fmt(e.x)}</b>`:`<span>Del ${fmt(de)} / Pick ${fmt(pu)}</span><b>${fmt(de+pu)}</b>`;
+    const lab=e.ln?`<span>Director loan ${e.ln<0?'repaid to you':'from you'}${e.note?' - '+esc(e.note):''}</span><b>${e.ln<0?'-':'+'}${fmt(Math.abs(e.ln))}</b>`:e.x?`<span>Expense: ${esc(e.cat||'')}${e.note?' - '+esc(e.note):''}</span><b class="neg">-${fmt(e.x)}</b>`:`<span>Del ${fmt(de)} / Pick ${fmt(pu)}</span><b>${fmt(de+pu)}</b>`;
     return `<div class="pe"><div class="pi">${lab}</div><div class="pb"><button type="button" class="save alt" data-a="edit" data-i="${i}">Edit</button><button type="button" class="save del" data-a="del" data-i="${i}">Delete</button></div></div>`}).join(''):'<div class="rn">No '+(popKind==='exp'?'expenses':'income')+' for this day</div>')
     +`<button type="button" class="save alt" data-a="add">+ Add ${popKind==='exp'?'expense':'income'} for this day</button>`;
   $('pop').style.display='flex';
@@ -542,7 +555,7 @@ $('earn').onclick=ev=>{const t=ev.target.closest('[data-cf]');if(t){cf=t.dataset
 let rt='week',rk='inc',rc=new Date(),RP=null;
 const FM=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const tt=l=>sum(l).reduce((a,b)=>a+b,0);
-const dw=l=>new Set(l.filter(e=>!e.x).map(e=>e.d)).size;
+const dw=l=>new Set(l.filter(e=>!e.x&&!e.ln).map(e=>e.d)).size;
 const av=(l,n)=>n?fmt(tt(l)/n):'-';
 const hr=l=>av(l,dw(l)*10);
 function repBuild(){
@@ -630,9 +643,9 @@ async function shareFile(f,nm){
 }
 function mkCsv(){
   const q=v=>{v=String(v==null?'':v);return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
-  const H=['Date','Day','Type','Category','Note','Deliveries','Pickups','Income total','Expense','Mainfreight month','Week of month','Financial year','Synced to Google Sheets'];
+  const H=['Date','Day','Type','Category','Note','Deliveries','Pickups','Income total','Expense','Director loan (+in / -out)','Mainfreight month','Week of month','Financial year','Synced to Google Sheets'];
   const L=entries.slice().sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0).map(e=>{const i=info(e.d,e.nm),de=e.a!==undefined?e.a:(e.del||0),pu=e.pu||0;
-    return [e.d,dayName(e.d),e.x?'Expense':'Income',e.x?(e.cat||''):'',e.x?(e.note||''):'',e.x?'':de.toFixed(2),e.x?'':pu.toFixed(2),e.x?'':(de+pu).toFixed(2),e.x?e.x.toFixed(2):'',i.ym,i.w,'FY'+String(i.y).slice(2),e.s?'Yes':'No']});
+    const ld=!!e.ln;return [e.d,dayName(e.d),ld?'Director loan':e.x?'Expense':'Income',e.x?(e.cat||''):'',(e.x||ld)?(e.note||''):'',(e.x||ld)?'':de.toFixed(2),(e.x||ld)?'':pu.toFixed(2),(e.x||ld)?'':(de+pu).toFixed(2),e.x?e.x.toFixed(2):'',ld?e.ln.toFixed(2):'',i.ym,i.w,'FY'+String(i.y).slice(2),e.s?'Yes':'No']});
   const csv='\ufeff'+[H].concat(L).map(r=>r.map(q).join(',')).join('\r\n');
   const nm='BMP-Cashflow-'+iso(new Date())+'.csv';
   shareFile(new File([csv],nm,{type:'text/csv'}),nm);

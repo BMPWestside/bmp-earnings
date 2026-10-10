@@ -247,6 +247,15 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
 .top .r.g{color:#4dff9a}.top .r.rd{color:#ff7a8a}
 .top .side:last-child{gap:6px}
 #rep .segs.two{margin-bottom:0}#rep #rkt .seg{padding:5px 0}
+/* 3-value-column (Expenses) tables, one-line cards, report buttons */
+.card.c3 .dg{grid-template-columns:50px 1px repeat(3,minmax(0,1fr)) 1px minmax(0,1.2fr);gap:3px}
+.card.c3 .cf{font-size:10.5px;padding-left:0;padding-right:0}
+.card.c3 .hd.h{font-size:9px;letter-spacing:0;padding-left:0;padding-right:0}
+.card.c3 .hd.h.l,.card.c3 .dn{font-size:10.5px}
+.top.tgc.one{grid-template-columns:1fr;padding:6px 16px;border-radius:16px}
+.tgc.pay .tgt{align-items:center;font-size:12px}.tgc.pay .tgt span:last-child b{color:#4dff9a;font-size:13px}
+#rep .segs:not(.two){grid-template-columns:repeat(4,1fr)}
+.dl2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 </style>
 </head>
 <body>
@@ -276,7 +285,7 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
       </div>
       <div class="fg" id="expf" style="display:none">
         <label>Expense amount<div class="cur"><span>A$</span><input id="ex" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"></div></label>
-        <label>Expense category<select id="cat"><option>Fuel</option><option>Tolls</option><option>Parking</option><option>Maintenance &amp; repairs</option><option>Insurance</option><option>Car Repayment</option><option>Truck Repayment</option><option>Phone</option><option>Other</option></select></label>
+        <label>Expense category<select id="cat"><option>Fuel</option><option>Tolls</option><option>Parking</option><option>Tyres</option><option>Maintenance &amp; repairs</option><option>Registration &amp; CTP</option><option>Truck &amp; public liability insurance</option><option>Insurance</option><option>Truck Repayment</option><option>Car Repayment</option><option>Salary</option><option>Superannuation</option><option>Accounting fees</option><option>ASIC fees</option><option>Bank fees</option><option>Phone &amp; software</option><option>Telematics &amp; work diary</option><option>PPE &amp; uniform</option><option>Other</option></select></label>
         <label>Note (optional)<input id="note" type="text" maxlength="60" placeholder="e.g. BP Rocklea"></label>
       </div>
       <label>Counts toward<select id="cm"><option value="">This month</option><option value="nm">1st week of next month</option></select></label>
@@ -299,15 +308,19 @@ const setDay=()=>{const v=$('date').value;$('day').value=v?new Date(v+'T00:00').
 $('date').value=iso(new Date());setDay();$('date').oninput=setDay;
 const amt=e=>e.a!==undefined?e.a:(e.del||0)+(e.pu||0);
 
+const fyOf=ym=>{const Y=+ym.slice(0,4),M=+ym.slice(5);return M>=7?Y+1:Y}; /* Australian financial year: 1 Jul - 30 Jun */
+const BIZ_YM='2026-10',BIZ_FY=2027; /* business started 28-Sep-2026 = Mainfreight October week 1 */
 function info(ds,nm){const d=new Date(ds+'T00:00');const m=new Date(d);m.setDate(d.getDate()-((d.getDay()+6)%7));
-  const th=new Date(m);th.setDate(m.getDate()+3);let ym=iso(th).slice(0,7),y=th.getFullYear(),w=Math.floor((th.getDate()-1)/7)+1;
-  if(nm){const t=new Date(th.getFullYear(),th.getMonth()+1,1);ym=iso(t).slice(0,7);y=t.getFullYear();w=1}
-  return{ds,ym,y,w}}
+  const th=new Date(m);th.setDate(m.getDate()+3);let ym=iso(th).slice(0,7),y,w=Math.floor((th.getDate()-1)/7)+1;
+  if(nm){const t=new Date(th.getFullYear(),th.getMonth()+1,1);ym=iso(t).slice(0,7);w=1}
+  y=fyOf(ym);return{ds,ym,y,w}}
 const sum=l=>{const de=l.reduce((a,e)=>a+(e.a!==undefined?e.a:(e.del||0)),0),pu=l.reduce((a,e)=>a+(e.pu||0),0);return[de,pu]};
-const sumX=l=>{let r=0,p=0;l.forEach(e=>{if(e.x){if(/repayment/i.test(e.cat||''))p+=e.x;else r+=e.x}});return[r,p]};
+const sumX=l=>{let r=0,sa=0,p=0;l.forEach(e=>{if(e.x){const c=e.cat||'';if(/repayment/i.test(c))p+=e.x;else if(/^(salary|superannuation)/i.test(c))sa+=e.x;else r+=e.x}});return[r,sa,p]};
 let cf='inc';
-const row=(n,l,k,F)=>{const[de,pu]=(F||sum)(l);return `<div class="dg"><div class="dn">${n}</div><i class="vd"></i><div class="cf">${fmt(de)}</div><div class="cf">${fmt(pu)}</div><i class="vd"></i><div class="cf t${k?' tap':''}"${k?` data-day="${k}"`:''}>${fmt(de+pu)}</div></div>`};
-const table=(h,rows,cls,c1,c2)=>`<div class="card sec"><div class="dg"><div class="hd h l">${h}</div><i class="vd"></i><div class="hd h">${c1||'Deliveries'}</div><div class="hd h">${c2||'Pickups'}</div><i class="vd"></i><div class="hd h">Total</div></div><div class="bd ${cls||''}">${rows}</div></div>`;
+const IH=['Deliveries','Pickups'],XH=['Running','Payroll','Repayments'];
+const row=(n,l,k,F)=>{const v=(F||sum)(l),t=v.reduce((a,b)=>a+b,0);return `<div class="dg"><div class="dn">${n}</div><i class="vd"></i>${v.map(x=>`<div class="cf">${fmt(x)}</div>`).join('')}<i class="vd"></i><div class="cf t${k?' tap':''}"${k?` data-day="${k}"`:''}>${fmt(t)}</div></div>`};
+const table=(h,rows,cls,heads)=>{heads=heads||IH;return `<div class="card sec c${heads.length}"><div class="dg"><div class="hd h l">${h}</div><i class="vd"></i>${heads.map(x=>`<div class="hd h">${x}</div>`).join('')}<i class="vd"></i><div class="hd h">Total</div></div><div class="bd ${cls||''}">${rows}</div></div>`};
+const TRUCK={price:100000,deposit:50000,monthly:5000}; /* truck bought 100k, 50k paid, 5k/month from Nov 2026 */
 const WT=5000,MT=20000; /* weekly and monthly targets (A$) */
 const dm=d=>String(d.getDate()).padStart(2,'0');const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 let sel=null;const fd=d=>d.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
@@ -323,18 +336,32 @@ function render(){
   const X=cf==='exp',F=X?sumX:sum,has=e=>X?!!e.x:!e.x,R=(n,l,k)=>row(n,l,k,F);
   const dayRows=['MON','TUE','WED','THU','FRI','SAT','SUN'].map((n,i)=>{const dt=new Date(ws);dt.setDate(ws.getDate()+i);const k=iso(dt);if(i>4&&!entries.some(e=>e.d===k&&has(e))&&k!==iso(now))return '';return R(n,entries.filter(e=>e.d===k),k)}).join('');
   const weekRows=[1,2,3,4,5].map(n=>R('Week '+n,E.filter(x=>x.ym===cur.ym&&x.w===n).map(x=>x.e))).join('');
-  let monthRows='';for(let i=0;i<12;i++){const d=new Date(2026,9+i,1),k=iso(d).slice(0,7);
-    monthRows+=R(MN[d.getMonth()]+' '+String(d.getFullYear()).slice(2),E.filter(x=>x.ym===k).map(x=>x.e))}
-  let yearRows='';for(let y=2026;y<=2035;y++)yearRows+=R(y,E.filter(x=>x.y===y).map(x=>x.e));
+  const fy=fyOf(cur.ym);let monthRows='',mIdx=0,mN=0;
+  for(let i=0;i<12;i++){const mm=(6+i)%12,yy=i<6?fy-1:fy,k=yy+'-'+String(mm+1).padStart(2,'0');if(k<BIZ_YM)continue;
+    if(k===cur.ym)mIdx=mN;mN++;monthRows+=R(MN[mm]+' '+String(yy).slice(2),E.filter(x=>x.ym===k).map(x=>x.e))}
+  let yearRows='',yIdx=0;for(let y=BIZ_FY;y<=Math.max(BIZ_FY,fy)+1;y++){if(y===fy)yIdx=y-BIZ_FY;yearRows+=R('FY'+String(y).slice(2),E.filter(x=>x.y===y).map(x=>x.e))}
   const _w1=new Date(ws);_w1.setDate(ws.getDate()+6);
   const wkV=entries.filter(e=>e.d>=iso(ws)&&e.d<=iso(_w1)).reduce((a,e)=>a+amt(e),0);
   const moV=E.filter(x=>x.ym===cur.ym).reduce((a,x)=>a+amt(x.e),0);
   const tg=(l,v,t)=>{const p=Math.round(v/t*100),k=n=>'A$'+Math.round(n).toLocaleString('en-AU');
     return `<div class="tg${p>=100?' hit':''}"><div class="tgt"><span>${l} <b>${p}%</b></span><span>${k(v)} / ${k(t)}</span></div><div class="tgb"><i style="width:${Math.min(100,p)}%"></i></div></div>`};
   const tgHtml=`<div class="card top tgc">${tg('Week',wkV,WT)}${tg('Month',moV,MT)}</div>`;
-  const h1=X?'Running':'Deliveries',h2=X?'Repayments':'Pickups';
+  const heads=X?XH:IH,kA=n=>'A$'+Math.round(n).toLocaleString('en-AU');
+  const MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  let extra='';
+  if(!X){
+    const pm={};E.forEach(x=>{if(!x.e.x)pm[x.ym]=(pm[x.ym]||0)+amt(x.e)});
+    const payOf=ym=>iso(new Date(+ym.slice(0,4),+ym.slice(5),15)),td=iso(new Date());
+    let nx=Object.keys(pm).sort().find(ym=>pm[ym]>0&&payOf(ym)>=td)||cur.ym;
+    const pd=new Date(payOf(nx)+'T00:00');
+    extra=tgHtml+`<div class="card top tgc one pay"><div class="tgt"><span>Next pay <b>${String(pd.getDate()).padStart(2,'0')}-${MN[pd.getMonth()]}-${pd.getFullYear()}</b> &middot; ${MF[+nx.slice(5)-1]} work</span><span><b>${fmt(pm[nx]||0)}</b></span></div></div>`;
+  }else{
+    const loan=TRUCK.price-TRUCK.deposit,paid=entries.filter(e=>e.x&&/^truck repayment/i.test(e.cat||'')).reduce((a,e)=>a+e.x,0),left=Math.max(0,loan-paid),pc=Math.round(paid/loan*100);
+    extra=`<div class="card top tgc one"><div class="tg${left<=0?' hit':''}"><div class="tgt"><span>Truck loan <b>${pc}% paid</b></span><span>${kA(left)} left of ${kA(loan)}</span></div><div class="tgb"><i style="width:${Math.min(100,pc)}%"></i></div></div></div>`}
   const sub=`<div class="segs two" id="cft"><button type="button" class="seg${X?'':' on'}" data-cf="inc">Income</button><button type="button" class="seg${X?' on':''}" data-cf="exp">Expenses</button></div>`;
-  $('earn').innerHTML=sub+(X?'':tgHtml)+table('Day',dayRows,'',h1,h2)+table('Week',weekRows,'sc w',h1,h2)+table('Month',monthRows,'sc m',h1,h2)+table('Year',yearRows,'sc y',h1,h2);
+  $('earn').innerHTML=sub+extra+table('Day',dayRows,'',heads)+table('Week',weekRows,'sc w',heads)+table('Month',monthRows,'sc m',heads)+table('Year',yearRows,'sc y',heads);
+  const scr=(sel,idx)=>{const el=$('earn').querySelector(sel);if(el&&el.children.length>idx&&idx>0){const k=Math.max(0,idx-1);el.scrollTop=el.children[k].offsetTop-el.children[0].offsetTop}};
+  scr('.sc.m',mIdx);scr('.sc.y',yIdx);
   renderRep();
 }
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
@@ -464,13 +491,15 @@ function clearForm(){['del','pu','ex','note'].forEach(i=>$(i).value='');$('cm').
 function startEdit(e){
   clearForm();setEdit(e);$('date').value=e.d;setDay();
   if(e.x){setMode('exp');$('ex').value=e.x;
-    if([...$('cat').options].some(o=>o.value===e.cat))$('cat').value=e.cat;$('note').value=e.note||''}
+    if(e.cat&&![...$('cat').options].some(o=>o.value===e.cat)){const o=document.createElement('option');o.textContent=e.cat;$('cat').appendChild(o)}
+    if(e.cat)$('cat').value=e.cat;$('note').value=e.note||''}
   else{$('del').value=(e.a!==undefined?e.a:e.del)||'';$('pu').value=e.pu||''}
   $('cm').value=e.nm?'nm':'';
   say('Editing entry. Change it, then tap Update Entry.');
   showTab('form');
 }
 function removeEntry(e){const i=entries.indexOf(e);if(i<0)return;entries.splice(i,1);if(e.s){pendingOps.push({sig:sig(e)});savePops()}persist()}
+$('cat').onchange=()=>{if($('cat').value==='Truck Repayment'&&$('ex').value==='')$('ex').value=TRUCK.monthly};
 $('cn').onclick=()=>{clearForm();setEdit(null);say('');showTab('earn')};
 $('f').onsubmit=ev=>{
   ev.preventDefault();
@@ -544,13 +573,20 @@ function repBuild(){
     rows=[1,2,3,4,5].map(n=>['Week '+n,E.filter(x=>x.ym===k&&x.w===n).map(x=>x.e)]);
     const wn=new Set(E.filter(x=>x.ym===k).map(x=>x.w)).size;
     A=[['Days worked',String(dw(list))],['Avg per day worked',av(list,dw(list))],['Avg per hour (10 hrs/day)',hr(list)],['Avg per week',av(list,wn)]];
-  }else{
+  }else if(rt==='quarter'){
     const s=m>=9?9:m>=6?6:m>=3?3:0,q={6:1,9:2,0:3,3:4}[s],fy=s>=6?y+1:y;
     t='Q'+q+' FY'+String(fy).slice(2);sub=MN[s]+' - '+MN[s+2]+' '+y;
     const ks=[0,1,2].map(i=>iso(new Date(y,s+i,1)).slice(0,7));
     const Q=E.filter(x=>ks.includes(x.ym));list=Q.map(x=>x.e);
     rows=ks.map((k,i)=>[MN[s+i]+' '+String(y).slice(2),E.filter(x=>x.ym===k).map(x=>x.e)]);
     const mn=new Set(Q.map(x=>x.ym)).size,wn=new Set(Q.map(x=>x.ym+x.w)).size;
+    A=[['Days worked',String(dw(list))],['Avg per day worked',av(list,dw(list))],['Avg per hour (10 hrs/day)',hr(list)],['Avg per week',av(list,wn)],['Avg per month',av(list,mn)]];
+  }else{
+    const fy=m>=6?y+1:y;t='FY'+String(fy).slice(2);sub='Jul '+(fy-1)+' - Jun '+fy;
+    const ks=[];for(let i=0;i<12;i++){const mm=(6+i)%12,yy=i<6?fy-1:fy,k=yy+'-'+String(mm+1).padStart(2,'0');if(k>=BIZ_YM)ks.push([k,MN[mm]+' '+String(yy).slice(2)])}
+    const Y=E.filter(x=>x.y===fy);list=Y.map(x=>x.e);
+    rows=ks.map(([k,lb])=>[lb,E.filter(x=>x.ym===k).map(x=>x.e)]);
+    const mn=new Set(Y.map(x=>x.ym)).size,wn=new Set(Y.map(x=>x.ym+x.w)).size;
     A=[['Days worked',String(dw(list))],['Avg per day worked',av(list,dw(list))],['Avg per hour (10 hrs/day)',hr(list)],['Avg per week',av(list,wn)],['Avg per month',av(list,mn)]];
   }
   const X=rk==='exp',F=X?sumX:sum;
@@ -559,23 +595,23 @@ function repBuild(){
     const cs=Object.entries(bc).sort((a,b)=>b[1]-a[1]),top=cs.slice(0,5),rest=cs.slice(5).reduce((a,c)=>a+c[1],0);
     A=[['Entries',String(xs.length)],['Avg per entry',xs.length?fmt(tot/xs.length):'-']].concat(top.map(c=>[c[0],fmt(c[1])]));
     if(rest)A.push(['Other categories',fmt(rest)])}
-  const[de,pu]=F(list);
-  RP={t,sub,de,pu,tot:de+pu,A,X,h1:X?'Running':'Deliveries',h2:X?'Repayments':'Pickups',F,rows:rows.map(r=>{const[a,b]=F(r[1]);return[r[0],a,b]})};
+  const heads=X?XH:IH,v=F(list),tot=v.reduce((a,b)=>a+b,0);
+  RP={t,sub,v,heads,tot,A,X,F,rows:rows.map(r=>[r[0],F(r[1])])};
   RP.ex=list.filter(e=>e.x).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0);
-  RP.rl=rows.map(r=>r[1]);RP.hd={day:'Day',week:'Day',month:'Week',quarter:'Month'}[rt];
+  RP.rl=rows.map(r=>r[1]);RP.hd={day:'Day',week:'Day',month:'Week',quarter:'Month',year:'Month'}[rt];
   return RP;
 }
 function renderRep(){
-  const R=repBuild(),P=['week','month','quarter'],N=['Week','Month','Quarter'];
+  const R=repBuild(),P=['week','month','quarter','year'],N=['Week','Month','Quarter','Year'];
   const seg=P.map((p,i)=>`<button type="button" class="seg${p===rt?' on':''}" data-r="${p}">${N[i]}</button>`).join('');
   const av2=R.A.map(a=>`<div class="ar"><span>${a[0]}</span><b>${a[1]}</b></div>`).join('');
   const rkt=`<div class="segs two" id="rkt"><button type="button" class="seg${R.X?'':' on'}" data-k="inc">Income</button><button type="button" class="seg${R.X?' on':''}" data-k="exp">Expenses</button></div>`;
   $('rep').innerHTML=rkt+`<div class="card sec"><div class="segs">${seg}</div>
   <div class="nav"><button type="button" class="nb" data-n="-1">&#8249;</button><div class="nt">${R.t}${R.sub?`<span class="rng">${R.sub}</span>`:''}</div><button type="button" class="nb" data-n="1">&#8250;</button></div></div>
-  <div class="card sec"><div class="cols"><div class="col"><small>${R.h1}</small><b>${fmt(R.de)}</b></div><div class="col"><small>${R.h2}</small><b>${fmt(R.pu)}</b></div><div class="col"><small>Total</small><b>${fmt(R.tot)}</b></div></div></div>
+  <div class="card sec"><div class="cols" style="grid-template-columns:repeat(${R.heads.length+1},1fr)">${R.heads.map((h,i)=>`<div class="col"><small>${h}</small><b>${fmt(R.v[i])}</b></div>`).join('')}<div class="col"><small>Total</small><b>${fmt(R.tot)}</b></div></div></div>
   <div class="card sec">${av2}</div>
-  ${R.rows.length?`<details class="bk"><summary class="card sec">Breakdown</summary>${table(R.hd,R.rows.map((r,i)=>row(r[0],R.rl[i],null,R.F)).join(''),rt==='month'?'sc w':'',R.h1,R.h2)}</details>`:''}
-  <button class="save" type="button" id="pdfb">Download PDF</button>`;
+  ${R.rows.length?`<details class="bk"><summary class="card sec">Breakdown</summary>${table(R.hd,R.rows.map((r,i)=>row(r[0],R.rl[i],null,R.F)).join(''),rt==='month'?'sc w':'',R.heads)}</details>`:''}
+  <div class="dl2"><button class="save" type="button" id="pdfb">Download PDF</button><button class="save alt" type="button" id="csvb">Download CSV</button></div>`;
   fit();
 }
 
@@ -585,10 +621,24 @@ $('rep').onclick=ev=>{
   if(r){rt=r.dataset.r;renderRep();return}
   
   if(n){const s=+n.dataset.n,y=rc.getFullYear(),m=rc.getMonth();
-    rc=rt==='day'?new Date(y,m,rc.getDate()+s):rt==='week'?new Date(y,m,rc.getDate()+7*s):rt==='month'?new Date(y,m+s,1):new Date(y,m+3*s,1);
+    rc=rt==='day'?new Date(y,m,rc.getDate()+s):rt==='week'?new Date(y,m,rc.getDate()+7*s):rt==='month'?new Date(y,m+s,1):rt==='quarter'?new Date(y,m+3*s,1):new Date(y+s,m,1);
     renderRep();return}
   if(ev.target.id==='pdfb')mkPdf();
+  if(ev.target.id==='csvb')mkCsv();
 };
+async function shareFile(f,nm){
+  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:nm});return}}catch(e){if(e&&e.name==='AbortError')return}
+  const u=URL.createObjectURL(f),a=document.createElement('a');a.href=u;a.download=nm;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},1500);
+}
+function mkCsv(){
+  const q=v=>{v=String(v==null?'':v);return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+  const H=['Date','Day','Type','Category','Note','Deliveries','Pickups','Income total','Expense','Mainfreight month','Week of month','Financial year','Synced to Google Sheets'];
+  const L=entries.slice().sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0).map(e=>{const i=info(e.d,e.nm),de=e.a!==undefined?e.a:(e.del||0),pu=e.pu||0;
+    return [e.d,dayName(e.d),e.x?'Expense':'Income',e.x?(e.cat||''):'',e.x?(e.note||''):'',e.x?'':de.toFixed(2),e.x?'':pu.toFixed(2),e.x?'':(de+pu).toFixed(2),e.x?e.x.toFixed(2):'',i.ym,i.w,'FY'+String(i.y).slice(2),e.s?'Yes':'No']});
+  const csv='\ufeff'+[H].concat(L).map(r=>r.map(q).join(',')).join('\r\n');
+  const nm='BMP-Cashflow-'+iso(new Date())+'.csv';
+  shareFile(new File([csv],nm,{type:'text/csv'}),nm);
+}
 async function mkPdf(){
   const J=window.jspdf;if(!J){alert('PDF tool is still loading. Check your internet and try again.');return}
   const R=RP,d=new J.jsPDF({unit:'mm',format:'a4'});let y=20;
@@ -599,14 +649,17 @@ async function mkPdf(){
   d.text('Generated '+new Date().toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}),15,y);y+=5;
   d.line(15,y,195,y);y+=8;
   const kv=(a,b,bold)=>{d.setFont('helvetica',bold?'bold':'normal');d.setFontSize(11);d.text(a,15,y);d.text(b,195,y,{align:'right'});y+=7};
-  kv(R.h1,fmt(R.de));kv(R.h2,fmt(R.pu));kv('Total',fmt(R.tot),true);y+=3;
-  R.A.forEach(a=>kv(a[0],a[1]));y+=4;if(R.rows.length){d.line(15,y,195,y);y+=7;
-  d.setFont('helvetica','bold');d.setFontSize(10);d.text(R.hd,15,y);d.text(R.h1,105,y,{align:'right'});d.text(R.h2,150,y,{align:'right'});d.text('Total',195,y,{align:'right'});y+=3;d.line(15,y,195,y);y+=6;
-  d.setFont('helvetica','normal');
-  R.rows.forEach(r=>{d.text(String(r[0]),15,y);d.text(fmt(r[1]),105,y,{align:'right'});d.text(fmt(r[2]),150,y,{align:'right'});d.text(fmt(r[1]+r[2]),195,y,{align:'right'});y+=6.5})}
-  const nm=(R.X?'BMP-Expenses-':'BMP-Earnings-')+rt+'-'+iso(rc)+'.pdf',blob=d.output('blob'),f=new File([blob],nm,{type:'application/pdf'});
-  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:nm});return}}catch(e){if(e&&e.name==='AbortError')return}
-  d.save(nm);
+  R.heads.forEach((h,i)=>kv(h,fmt(R.v[i])));kv('Total',fmt(R.tot),true);y+=3;
+  R.A.forEach(a=>kv(a[0],a[1]));y+=4;
+  if(R.rows.length){
+    const n=R.heads.length;
+    const X=n===3?[100,130,160,195]:[110,150,195];
+    d.line(15,y,195,y);y+=7;d.setFont('helvetica','bold');d.setFontSize(10);d.text(R.hd,15,y);
+    R.heads.forEach((h,i)=>d.text(h,X[i],y,{align:'right'}));d.text('Total',195,y,{align:'right'});y+=3;d.line(15,y,195,y);y+=6;
+    d.setFont('helvetica','normal');
+    R.rows.forEach(r=>{if(y>280){d.addPage();y=20}d.text(String(r[0]),15,y);r[1].forEach((v,i)=>d.text(fmt(v),X[i],y,{align:'right'}));d.text(fmt(r[1].reduce((a,b)=>a+b,0)),195,y,{align:'right'});y+=6.5})}
+  const nm=(R.X?'BMP-Expenses-':'BMP-Earnings-')+rt+'-'+iso(rc)+'.pdf';
+  await shareFile(new File([d.output('blob')],nm,{type:'application/pdf'}),nm);
 }
 
 render();

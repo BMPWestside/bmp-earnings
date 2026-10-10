@@ -415,9 +415,6 @@ html.locked .wrap{visibility:hidden}
 .fcr b{font-weight:600}.fcr small{text-align:right;font-size:11px;color:var(--muted)}
 .mfb label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;flex-direction:row}.mfb label input{width:150px}
 .mfc{font-size:12px;color:#fff;background:rgba(70,130,215,.16);border-radius:10px;padding:6px 10px;line-height:17px}
-.rcr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:8px;align-items:center}
-.rcr input[data-f=n]{grid-column:1/3}.rcr b{grid-column:3;grid-row:1;text-align:right;cursor:pointer;color:#ff7a8a;padding-right:6px}.rcr select{grid-column:1/-1}
-.rcr select{min-width:0;max-width:none!important;width:100%}.rcr input{min-width:0;width:100%}
 .bnl{max-height:110px;overflow:auto}.bnr{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;padding:4px 0;border-top:1px solid rgba(160,175,255,.16)}
 .bnr span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bnr button.mini{padding:5px 12px!important;font-size:12px!important}
 .tv svg{width:100%;height:auto;display:block;margin-top:6px}.tms{margin-bottom:0}.tms .seg{padding:4px 0}
@@ -434,6 +431,11 @@ html.locked .wrap{visibility:hidden}
   .fres{max-height:calc(100vh - 330px)}.fcr{font-size:14px;padding:6px 0}.fd{font-size:14px;padding:8px 2px}.mfr b{font-size:15px}
   #tlt.five .seg{font-size:13px}.fcr{grid-template-columns:58px 1fr auto 76px}
 }
+.rcr{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px;margin-bottom:10px;padding:8px;border:1px solid rgba(160,175,255,.22);border-radius:14px;background:rgba(70,130,215,.1);position:relative}
+.rcr label,.card.tl .rcr label{display:flex;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:2px;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.rcr label.f2{grid-column:1/-1}.rcr label.f2:first-child{padding-right:26px}
+.rcr input,.rcr select,.card.tl .rcr select{width:100%!important;box-sizing:border-box;text-align:left;max-width:none!important;min-width:0;font-size:14px;text-transform:none;letter-spacing:0;color:#fff}
+.rcr b{position:absolute;top:6px;right:10px;grid-column:auto!important;grid-row:auto!important;padding:0!important;color:#ff7a8a;cursor:pointer;font-size:15px}
 </style>
 <script>try{if(JSON.parse(localStorage.getItem("lk")||"null").pin)document.documentElement.classList.add("locked")}catch(e){}</script>
 </head>
@@ -1130,12 +1132,24 @@ function binHtml(){BIN=BIN.filter(b=>Date.now()-b.at<30*864e5);const L=BIN.map((
   return `<div class="card tl"><div class="pfh">Recently deleted · kept 30 days</div>${L.length?`<div class="bnl">${L.map(([b,i])=>{const e=b.e,t=e.ln?'Director loan':e.x?(e.cat||'Expense'):'Income',a=e.ln?Math.abs(e.ln):e.x?e.x:(e.a!==undefined?e.a:(e.del||0))+(e.pu||0);
     return `<div class="bnr"><span>${dAU(e.d)} · ${esc(t)} · ${A(a)}</span><button type="button" class="mini" data-bin="${i}">Restore</button></div>`}).join('')}</div>`:'<div class="hint">Nothing deleted recently.</div>'}</div>`}
 /* recurring */
+const WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 function recHtml(){const cats=[...document.querySelectorAll('#cat option')].map(o=>o.value);
-  return `<div class="card tl"><div class="pfh">Recurring expenses</div><div class="rcs">${RC.map((r,i)=>`<div class="rcr"><input data-rc="${i}" data-f="n" value="${esc(r.n)}" placeholder="Name"><b data-rcdel="${i}">✕</b><select data-rc="${i}" data-f="cat">${cats.map(c=>`<option${c===r.cat?' selected':''}>${esc(c)}</option>`).join('')}</select><input data-rc="${i}" data-f="amt" type="number" inputmode="decimal" step="0.01" value="${esc(r.amt)}" placeholder="A$"><input data-rc="${i}" data-f="day" type="number" inputmode="numeric" min="1" max="28" value="${esc(r.day)}" placeholder="Day"><input data-rc="${i}" data-f="from" type="month" value="${esc(r.from)}"></div>`).join('')}</div>
-<div class="hint">On the day of the month you set (1-28), a Log button appears on the Cashflow tab. One tap adds the expense. Columns: category, amount, day, starting month.</div><button type="button" class="mini" id="b_radd2">+ Add item</button></div>`}
-function recDue(){const now=todayK(),m=now.slice(0,7),out=[];
-  RC.forEach((r,i)=>{if(!(+r.amt)||!(+r.day)||!r.cat||(r.from&&m<r.from))return;const dd=m+'-'+pad2(Math.min(28,+r.day));if(dd>now)return;
-    if(entries.some(e=>e.x&&e.cat===r.cat&&e.d.slice(0,7)===m))return;out.push({i,d:dd})});return out}
+  const card=(r,i)=>{const w=r.freq==='w';return `<div class="rcr"><label class="f2">Name<input data-rc="${i}" data-f="n" value="${esc(r.n)}" placeholder="e.g. Truck repayment"></label><b data-rcdel="${i}">✕</b>
+<label class="f2">Category<select data-rc="${i}" data-f="cat">${cats.map(c=>`<option${c===r.cat?' selected':''}>${esc(c)}</option>`).join('')}</select></label>
+<label>Amount (A$)<input data-rc="${i}" data-f="amt" type="number" inputmode="decimal" step="0.01" value="${esc(r.amt)}" placeholder="0.00"></label>
+<label>Repeats<select data-rc="${i}" data-f="freq"><option value="m"${w?'':' selected'}>Every month</option><option value="w"${w?' selected':''}>Every week</option></select></label>
+${w?`<label>On<select data-rc="${i}" data-f="wd">${[1,2,3,4,5,6,0].map(d=>`<option value="${d}"${+r.wd===d?' selected':''}>${WD[d]}</option>`).join('')}</select></label>`:`<label>Day of month<input data-rc="${i}" data-f="day" type="number" inputmode="numeric" min="1" max="28" value="${esc(r.day)}" placeholder="1-28"></label>`}
+<label>Starting<input data-rc="${i}" data-f="from" type="month" value="${esc(r.from)}"></label></div>`};
+  return `<div class="card tl"><div class="pfh">Recurring expenses</div><div class="rcs">${RC.map(card).join('')||'<div class="hint">Nothing set up yet.</div>'}</div>
+<div class="hint">On the due day a Log button appears on the Cashflow tab. One tap adds the expense. Pick the category from the list.</div>
+<div class="two2"><button type="button" class="mini" id="b_radd2">+ Add item</button><button type="button" class="mini" id="b_rsal">+ Salary &amp; Super</button></div></div>`}
+const rcSal=()=>RC.some(r=>r.freq==='w'&&/^salary/i.test(r.cat||'')&&+r.amt>0);
+function recOcc(r,now){if(r.freq==='w'){const d=new Date(now+'T00:00');d.setDate(d.getDate()-((d.getDay()-(+r.wd)+7)%7));return iso(d)}return now.slice(0,7)+'-'+pad2(Math.min(28,+r.day))}
+function recDone(r,k){if(r.freq==='w'){const lo=new Date(k+'T00:00'),hi=new Date(lo);lo.setDate(lo.getDate()-3);hi.setDate(hi.getDate()+3);return entries.some(e=>e.x&&e.cat===r.cat&&e.d>=iso(lo)&&e.d<=iso(hi))}return entries.some(e=>e.x&&e.cat===r.cat&&e.d.slice(0,7)===k.slice(0,7))}
+const recOk=r=>(+r.amt)&&r.cat&&(r.freq==='w'?(r.wd!==''&&r.wd!=null):+r.day);
+function recDue(){const now=todayK(),out=[];
+  RC.forEach((r,i)=>{if(!recOk(r))return;const k=recOcc(r,now);if(r.from&&k<r.from+'-01')return;if(k>now)return;if(r.freq==='w'&&k<PAY_START)return;if(recDone(r,k))return;out.push({i,d:k})});return out}
+const payDue0=payDue;payDue=function(){return rcSal()?null:payDue0()};
 const banners0=banners;
 banners=function(){return banners0()+recDue().map(o=>{const r=RC[o.i];return `<div class="al"><span>${esc(r.n||r.cat)} ${A(+r.amt)} due ${dAU(o.d)}</span><button type="button" data-act="rec" data-i="${o.i}" data-d="${o.d}">Log</button></div>`}).join('')};
 /* cash */
@@ -1145,10 +1159,11 @@ function est(){let b=+BK.adj||0;Object.keys(MF).forEach(k=>{const m=MF[k];if(m&&
 function chk(m,c){const ex=+m.invEx||0,inc=+m.invInc||0;let d;if(ex>0)d=ex-c.ex;else if(inc>0)d=inc-c.inc;else return['Tap to add invoice',''];
   return Math.abs(d)<.5?['✔ Matches invoice','cg']:d>0?['Missing '+A(d),'cr']:['Over by '+A(-d),'cr']}
 function forecast(){const now=todayK(),cur=info(now).ym,t0=new Date(now+'T00:00'),en=new Date(t0);en.setDate(en.getDate()+30);const ek=iso(en),ev=[];
-  for(let d=new Date(t0);d<=en;d.setDate(d.getDate()+1)){const k=iso(d);if(d.getDay()===2&&k>=PAY_START){const lo=new Date(d),hi=new Date(d);lo.setDate(lo.getDate()-3);hi.setDate(hi.getDate()+3);
+  for(let d=new Date(t0);d<=en;d.setDate(d.getDate()+1)){const k=iso(d);if(d.getDay()===2&&k>=PAY_START&&!rcSal()){const lo=new Date(d),hi=new Date(d);lo.setDate(lo.getDate()-3);hi.setDate(hi.getDate()+3);
     if(!entries.some(e=>e.x&&/^salary/i.test(e.cat||'')&&e.d>=iso(lo)&&e.d<=iso(hi)))ev.push({d:k,t:'Salary + super',a:-(CFG.sal+CFG.sup)})}}
-  [cur,nextYm(cur)].forEach(m=>RC.forEach(r=>{if(!(+r.amt)||!(+r.day)||(r.from&&m<r.from))return;const dd=m+'-'+pad2(Math.min(28,+r.day));
+  [cur,nextYm(cur)].forEach(m=>RC.forEach(r=>{if(r.freq==='w'||!(+r.amt)||!(+r.day)||(r.from&&m<r.from))return;const dd=m+'-'+pad2(Math.min(28,+r.day));
     if(entries.some(e=>e.x&&e.cat===r.cat&&e.d.slice(0,7)===m))return;if(dd>ek)return;if(dd<now&&m!==cur)return;ev.push({d:dd<now?now:dd,t:(r.n||r.cat)+(dd<now?' (due)':''),a:-(+r.amt)})}));
+  RC.forEach(r=>{if(r.freq!=='w'||!recOk(r))return;for(let d=new Date(t0);d<=en;d.setDate(d.getDate()+1)){const k=iso(d);if(d.getDay()!==+r.wd||(r.from&&k<r.from+'-01')||recDone(r,k))continue;ev.push({d:k,t:r.n||r.cat,a:-(+r.amt)})}});
   for(let ym=BIZ_YM;ym<=cur;ym=nextYm(ym)){const m=MF[ym]||{};if(m.recDate)continue;const due=dueOf(ym);if(due>ek)continue;ev.push({d:due<now?now:due,t:'Mainfreight '+ymName(ym)+(ym===cur?' (so far)':''),a:mfAmt(ym)})}
   const Y=t0.getFullYear();[Y-1,Y,Y+1].forEach(y=>[3,6,9,12].forEach(q=>{const qe=y+'-'+pad2(q);if(qe<BIZ_YM)return;const due=nextYm(qe)+'-28';if(due<now||due>ek)return;
     const qk=[qe,prevYm(qe),prevYm(prevYm(qe))],Q=agg(e=>qk.includes(info(e.d,e.nm).ym)),g=Q.Ig-Q.Xg;
@@ -1194,11 +1209,12 @@ $('mfm').addEventListener('click',ev=>{const t=ev.target;if(t===$('mfm')||t.id==
   saveX();$('mfm').style.display='none';render()});
 /* tools: recurring + bin */
 $('tools').addEventListener('click',ev=>{const t=ev.target;
-  if(t.id==='b_radd2'){RC.push({n:'',cat:'Other',amt:'',day:1,from:todayK().slice(0,7)});saveX();toolsView();return}
+  if(t.id==='b_radd2'){RC.push({n:'',cat:'Other',amt:'',freq:'m',day:1,wd:2,from:todayK().slice(0,7)});saveX();toolsView();return}
+  if(t.id==='b_rsal'){const f='2026-10';RC=RC.filter(r=>!(r.freq==='w'&&/^(salary|superannuation)/i.test(r.cat||'')));RC.push({n:'Salary',cat:'Salary',amt:CFG.sal,freq:'w',wd:2,from:f},{n:'Super',cat:'Superannuation',amt:CFG.sup,freq:'w',wd:2,from:f});saveX();toolsView();render();return}
   if(t.dataset.rcdel!==undefined){RC.splice(+t.dataset.rcdel,1);saveX();toolsView();render();return}
   if(t.dataset.bin!==undefined)binRestore(+t.dataset.bin)});
 $('tools').addEventListener('change',ev=>{const t=ev.target;if(t.dataset.rc===undefined)return;const r=RC[+t.dataset.rc],f=t.dataset.f;if(!r)return;
-  r[f]=(f==='amt'||f==='day')?(t.value===''?'':+t.value):t.value;saveX();render()});
+  r[f]=(f==='amt'||f==='day'||f==='wd')?(t.value===''?'':+t.value):t.value;if(f==='freq'&&r.freq==='w'&&(r.wd===''||r.wd==null))r.wd=2;saveX();render();if(f==='freq')toolsView()});
 /* reports: trend + find */
 let tm=null,fq='',ft='all',fmn='all';
 const rkBar=()=>`<div class="segs four" id="rkt">${[['inc','Income'],['exp','Expenses'],['trend','Trend'],['find','Find']].map(([k,n])=>`<button type="button" class="seg${rk===k?' on':''}" data-k="${k}">${n}</button>`).join('')}</div>`;

@@ -304,6 +304,9 @@ button.save.del{background:rgba(228,0,43,.25);border:1px solid rgba(255,120,135,
 .lockov .lk2{font:inherit;font-size:14px;font-weight:600;color:#fff;background:none;border:0;text-decoration:underline;min-height:20px}
 html.locked .wrap{visibility:hidden}
 .card.tl label{flex-direction:row;align-items:center;justify-content:space-between;text-align:left;gap:10px}.card.tl select{max-width:190px}.card.tl .two2 button{width:100%}
+/* unified selected-tab colour + Tools buttons */
+.seg.on,#earn .seg.on,#rep .seg.on,#tools .seg.on,#form .seg.on{background:rgba(70,130,215,.38)!important;color:#fff!important;box-shadow:inset 0 0 0 1px rgba(245,214,166,.3)!important;border-color:rgba(245,214,166,.3)!important}
+#tools button.mini,.tl button.mini{background:rgba(70,130,215,.38)!important;color:#fff;box-shadow:inset 0 0 0 1px rgba(245,214,166,.3);border:1px solid rgba(245,214,166,.3)}
 </style>
 <script>try{if(JSON.parse(localStorage.getItem("lk")||"null").pin)document.documentElement.classList.add("locked")}catch(e){}</script>
 </head>
@@ -696,9 +699,10 @@ function mkCsv(){
   const nm='BMP-Cashflow-'+iso(new Date())+'.csv';
   shareFile(new File([csv],nm,{type:'text/csv'}),nm);
 }
+function pdfLogo(d){try{const im=document.querySelector('img.lg');if(im&&im.src)d.addImage(im.src,'PNG',172,8,23,23)}catch(e){}}
 async function mkPdf(){
   const J=window.jspdf;if(!J){alert('PDF tool is still loading. Check your internet and try again.');return}
-  const R=RP,d=new J.jsPDF({unit:'mm',format:'a4'});let y=20;
+  const R=RP,d=new J.jsPDF({unit:'mm',format:'a4'});let y=20;pdfLogo(d);
   d.setFont('helvetica','bold');d.setFontSize(18);d.text(R.X?'BMP Expenses Report':'BMP Earnings Report',15,y);y+=8;
   d.setFontSize(13);d.text(rt[0].toUpperCase()+rt.slice(1)+': '+R.t,15,y);y+=6;
   d.setFont('helvetica','normal');d.setFontSize(10);
@@ -758,7 +762,7 @@ function proView(){
   const tx=n=>Math.max(0,n)*(CFG.tax/100);
   const gnQ=Q.Ig-Q.Xg,gnM=M.Ig-M.Xg;
   const sub=`<div class="segs three" id="cft"><button type="button" class="seg" data-cf="inc">Income</button><button type="button" class="seg" data-cf="exp">Expenses</button><button type="button" class="seg on" data-cf="pro">Profit</button></div>`;
-  const gst=CFG.gst?`<div class="card pf"><div class="pfh">GST · BAS ${ql} ${qy}</div><div class="pft"><span>GST collected on income</span><b>${kN(Q.Ig)}</b></div><div class="pft"><span>GST credits on expenses</span><b>${kN(Q.Xg)}</b></div><div class="pft big"><span>${gnQ>=0?'GST to pay (estimate)':'GST refund (estimate)'}</span><b>${kN(Math.abs(gnQ))}</b></div></div>`:`<div class="card pf"><div class="pfh">GST</div><div class="pfn">GST is switched off. Turn it on in Tools &gt; Setup.</div></div>`;
+  const gst=CFG.gst?`<div class="card pf"><div class="pfh">GST · BAS ${ql} ${qy}</div><div class="pft"><span>GST collected on income</span><b>${kN(Q.Ig)}</b></div><div class="pft"><span>GST credits on expenses</span><b>${kN(Q.Xg)}</b></div><div class="pft"><span>${MN[+cur.ym.slice(5)-1]} invoice incl GST (expected)</span><b>${kN(M.I+M.Ig)}</b></div><div class="pft big"><span>${gnQ>=0?'GST to pay (estimate)':'GST refund (estimate)'}</span><b>${kN(Math.abs(gnQ))}</b></div></div>`:`<div class="card pf"><div class="pfh">GST</div><div class="pfn">GST is switched off. Turn it on in Tools &gt; Setup.</div></div>`;
   const keep=tx(M.P)+(CFG.gst?Math.max(0,gnM):0);
   const tax=`<div class="card pf"><div class="pfh">Tax set-aside · ${CFG.tax}% of profit</div><div class="pft"><span>${MN[+cur.ym.slice(5)-1]} company tax</span><b>${kN(tx(M.P))}</b></div><div class="pft"><span>FY${String(fy).slice(2)} company tax so far</span><b>${kN(tx(Y.P))}</b></div><div class="pft big"><span>Keep aside this month${CFG.gst?' (tax + GST)':''}</span><b>${kN(keep)}</b></div></div>`;
   $('earn').innerHTML=sub+`<div class="card pf"><div class="pfr h"><span></span><span>Income</span><span>Expenses</span><span>Profit</span></div>${row('Week',W)}${row('Month',M)}${row('Quarter',Q)}${row('FY'+String(fy).slice(2),Y)}</div>`+gst+tax+`<div class="pfn">Amounts exclude GST and are before truck depreciation. Truck/car repayments and director loan money are not counted as expenses. Estimates only: confirm with your accountant.</div>`;
@@ -850,7 +854,7 @@ function fyData(fy){const L=entries.filter(e=>info(e.d,e.nm).y===fy);
   const dl=entries.reduce((a,e)=>a+(e.ln||0),0),tp=entries.filter(e=>e.x&&/^truck repayment/i.test(e.cat||'')).reduce((a,e)=>a+e.x,0);
   return{fy,months,T,cats:Object.entries(cats).sort((a,b)=>b[1].t-a[1].t),reps:Object.entries(reps),sal,sup,truck,dl,left:Math.max(0,TRUCK.price-TRUCK.deposit-tp),tax:Math.max(0,T.P)*CFG.tax/100}}
 function fyCsv(fy){const D=fyData(fy),q=v=>{v=String(v==null?'':v);return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v},f2=n=>(+n).toFixed(2),R=[];
-  R.push(['BMP Earnings - Financial year FY'+String(fy).slice(2)+' (1 Jul '+(fy-1)+' - 30 Jun '+fy+')']);R.push(['GST registered',CFG.gst?'Yes':'No']);R.push([]);
+  R.push(['BMP Westside - Financial year FY'+String(fy).slice(2)+' (1 Jul '+(fy-1)+' - 30 Jun '+fy+')']);R.push(['GST registered',CFG.gst?'Yes':'No']);R.push([]);
   R.push(['Month','Income (ex GST)','GST collected','Expenses (ex GST)','GST credits','Profit before depreciation']);
   D.months.forEach(m=>R.push([m[0],f2(m[1].I),f2(m[1].Ig),f2(m[1].X),f2(m[1].Xg),f2(m[1].P)]));
   R.push(['Total',f2(D.T.I),f2(D.T.Ig),f2(D.T.X),f2(D.T.Xg),f2(D.T.P)]);R.push([]);
@@ -861,7 +865,7 @@ function fyCsv(fy){const D=fyData(fy),q=v=>{v=String(v==null?'':v);return /[",\r
   R.push(['Truck loan paid this year',f2(D.truck)]);R.push(['Truck loan remaining (today)',f2(D.left)]);R.push(['Director loan balance today (+ company owes you)',f2(D.dl)]);
   const nm='BMP-FY'+String(fy).slice(2)+'-accountant-pack.csv';shareFile(new File(['﻿'+R.map(r=>r.map(q).join(',')).join('\r\n')],nm,{type:'text/csv'}),nm)}
 async function fyPdf(fy){const J=window.jspdf;if(!J){alert('PDF tool is still loading. Check your internet and try again.');return}
-  const D=fyData(fy),d=new J.jsPDF({unit:'mm',format:'a4'});let y=18;
+  const D=fyData(fy),d=new J.jsPDF({unit:'mm',format:'a4'});let y=18;pdfLogo(d);
   const pg=n=>{if(y+n>284){d.addPage();y=18}},tx=(a,b,c,bold)=>{pg(7);d.setFont('helvetica',bold?'bold':'normal');d.setFontSize(10);d.text(String(a),15,y);if(b!==undefined)d.text(String(b),c||195,y,{align:'right'});y+=6};
   const row5=(r,bold)=>{pg(7);d.setFont('helvetica',bold?'bold':'normal');d.setFontSize(9);d.text(String(r[0]),15,y);[70,100,130,160,195].forEach((x,i)=>d.text(String(r[i+1]),x,y,{align:'right'}));y+=6};
   d.setFont('helvetica','bold');d.setFontSize(17);d.text('BMP Financial Year Pack FY'+String(fy).slice(2),15,y);y+=7;

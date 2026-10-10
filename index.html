@@ -322,6 +322,20 @@ html.locked .wrap{visibility:hidden}
 .top2 span{font-size:13.5px!important}
 .seg,#earn .seg,#rep #rkt .seg,#tools .seg,#form .seg,#rep .seg{padding:2px 0!important;font-size:11.5px!important}
 .topwrap{padding-top:20px!important}
+/* data manager */
+.segs.four{grid-template-columns:repeat(4,1fr);margin-bottom:0}
+.tl .dmf{width:100%;max-width:none;font:inherit;font-size:13px;color:#fff;background:rgba(70,150,255,.2);border:1px solid var(--edge);border-radius:10px;padding:7px 9px}
+.tl .dmf::placeholder{color:#8fa9d0}
+.tl .two2 .dmf{min-width:0}
+.dmlist{display:flex;flex-direction:column;gap:6px;min-height:90px;max-height:calc(100vh - 330px);overflow-y:auto;scrollbar-width:none}
+.dmlist::-webkit-scrollbar{display:none}
+.dmi{display:flex;align-items:center;gap:8px;background:rgba(70,150,255,.18);border:1px solid var(--edge);border-radius:12px;padding:4px 6px 4px 12px;font-size:14px;font-weight:600;word-break:break-word}
+.dmt{flex:1;min-width:0;padding:5px 0}.dml2{display:block;font-size:10.5px;color:#F5D6A6;text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px}
+.dma{display:flex;gap:5px;flex-shrink:0}
+.dmb{border:0;background:rgba(70,150,255,.35);border-radius:10px;padding:6px 8px;display:inline-flex}
+.dmb svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dmb.ok{background:#2e9e5b}
+.card.tl select.dmf{max-width:none;width:100%}
 </style>
 <script>try{if(JSON.parse(localStorage.getItem("lk")||"null").pin)document.documentElement.classList.add("locked")}catch(e){}</script>
 </head>
@@ -804,7 +818,7 @@ $('earn').addEventListener('click',ev=>{const b=ev.target.closest('[data-act="pa
 let tl='set';
 const inp=(id,v,ex)=>`<input id="${id}" value="${esc(v)}" ${ex||''}>`;
 function toolsView(){
-  const seg=['set:Setup','rem:Reminders','dat:Data'].map(s=>{const[k,n]=s.split(':');return`<button type="button" class="seg${tl===k?' on':''}" data-tl="${k}">${n}</button>`}).join('');
+  const seg=['set:Setup','rem:Reminders','dat:Backup','mgr:Manager'].map(s=>{const[k,n]=s.split(':');return`<button type="button" class="seg${tl===k?' on':''}" data-tl="${k}">${n}</button>`}).join('');
   let b='';
   if(tl==='set')b=`<div class="card tl"><label>GST registered<select id="c_gst"><option value="1"${CFG.gst?' selected':''}>Yes</option><option value="0"${CFG.gst?'':' selected'}>No</option></select></label>
 <label>Income I enter is<select id="c_inc"><option value="ex"${CFG.incGst==='ex'?' selected':''}>Excluding GST</option><option value="inc"${CFG.incGst==='inc'?' selected':''}>Including GST</option></select></label>
@@ -818,12 +832,13 @@ function toolsView(){
 <div class="rems">${REM.map((r,i)=>`<div class="rr"><input data-ri="${i}" data-f="n" value="${esc(r.n)}" placeholder="Name"><input type="date" data-ri="${i}" data-f="d" value="${esc(r.d)}"><input type="number" inputmode="numeric" data-ri="${i}" data-f="km" value="${esc(r.km)}" placeholder="at km"><b data-del="${i}">✕</b></div>`).join('')}</div>
 <div class="hint">Add a date, a service km, or both. Items due within 30 days (or 1,000 km) show on the Cashflow tab.</div>
 <div class="two2"><button type="button" class="mini" id="b_radd">+ Add item</button><button type="button" class="mini" id="b_rics">Add to Calendar</button></div></div>`;
+  else if(tl==='mgr')b=dmHtml();
   else{const fys=[];for(let y=BIZ_FY;y<=Math.max(BIZ_FY,fyOf(info(todayK()).ym));y++)fys.push(y);
     b=`<div class="card tl"><div class="pfh">Backup</div><div class="two2"><button type="button" class="mini" id="b_exp">Export backup</button><button type="button" class="mini" id="b_imp">Import backup</button></div><input type="file" id="b_file" accept=".json,application/json" style="display:none">
 <div class="pfh">Financial year pack for your accountant</div><label>Year<select id="c_fy">${fys.map(y=>`<option value="${y}">FY${String(y).slice(2)} (Jul ${y-1} - Jun ${y})</option>`).join('')}</select></label>
 <div class="two2"><button type="button" class="mini" id="b_fypdf">PDF</button><button type="button" class="mini" id="b_fycsv">CSV</button></div>
 <div class="pfh">App lock</div>${LK&&LK.pin?`<div class="hint">Lock is ON${LK.cred?' (Face ID + PIN)':' (PIN)'}. Locks after 1 minute away.</div><div class="two2">${LK.cred?'<span></span>':'<button type="button" class="mini" id="b_fid">Add Face ID</button>'}<button type="button" class="mini" id="b_lkoff">Turn off</button></div>`:`<button type="button" class="mini" id="b_lkon">Set up PIN / Face ID lock</button>`}</div>`}
-  $('tools').innerHTML=`<div class="segs three" id="tlt">${seg}</div>`+b;fit()}
+  $('tools').innerHTML=`<div class="segs four" id="tlt">${seg}</div>`+b;fit()}
 $('tools').addEventListener('click',ev=>{const t=ev.target,s=t.closest('[data-tl]');if(s){tl=s.dataset.tl;toolsView();return}
   if(t.dataset.del!==undefined){REM.splice(+t.dataset.del,1);saveCfg();toolsView();render();return}
   const id=t.id;
@@ -917,6 +932,74 @@ async function enrollFid(){try{const c=await navigator.credentials.create({publi
 $('lkf').onclick=async()=>{try{await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),allowCredentials:[{type:'public-key',id:unb64(LK.cred)}],userVerification:'required',timeout:60000}});hideLock()}catch(e){$('lkm').textContent='Face ID failed. Use your PIN.'}};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)hiddenAt=Date.now();else if(LK&&LK.pin&&hiddenAt&&Date.now()-hiddenAt>60000&&$('lockov').style.display!=='flex'){document.documentElement.classList.add('locked');showLock('unlock','Enter PIN')}});
 if(LK&&LK.pin)showLock('unlock','Enter PIN');else document.documentElement.classList.remove('locked');
+/* ===== BMP Data Manager (merged into Tools > Manager) ===== */
+const DM_SHEET='1P1TbxS0Vc-6THkPhetr6A48YHbYKE3t2QiSk8RUXxXQ';
+const DM_DEF=['Username','Password','Email','Phone','Account No','URL','PIN','Notes'];
+let dmRows=[],dmFields=[],dmLoaded=false,dmBusy=false,dmMode='view',dmSingle=true,dmShown={},dmPick='',dmMsg='';
+const dmIsPw=l=>/password/i.test(l||'');
+const dmApi=(p,o)=>api('https://sheets.googleapis.com/v4/spreadsheets/'+DM_SHEET+p,o);
+const dmWhy=e=>e&&e.code==='needs_reauth'?'Sign in with Google (button at the top) to open your data.':e instanceof TypeError?'No connection to Google. Check your internet.':(e&&e.message)||'Something went wrong';
+async function dmLoad(){if(dmBusy)return;dmBusy=true;dmMsg='Loading...';dmPaint();
+  try{const p=await dmApi('/values:batchGet?ranges=Data!A%3AC&ranges=Fields!A%3AA&valueRenderOption=FORMATTED_VALUE');
+    const vr=p.valueRanges||[],v=(vr[0]&&vr[0].values)||[];dmRows=[];
+    dmFields=((vr[1]&&vr[1].values)||[]).slice(1).map(r=>String(r&&r[0]!=null?r[0]:'').trim()).filter(Boolean);
+    const cell=(r,i)=>r&&r[i]!=null?String(r[i]):'';
+    v.forEach((r,i)=>{if(i===0)return;const sec=cell(r,0).trim(),val=cell(r,1);if(!sec||!val)return;
+      const o={id:String(i+1),section:sec,value:val,label:cell(r,2).trim(),kind:'',pwLabel:''};
+      if(!o.label&&/:\s*$/.test(val.trim()))o.kind='label';
+      else if(!o.label&&i>1){const q=v[i-1]||[];if(cell(q,0).trim().toLowerCase()===sec.toLowerCase()&&!cell(q,2).trim()&&/:\s*$/.test(cell(q,1).trim()))o.pwLabel=cell(q,1).trim().replace(/:\s*$/,'')}
+      dmRows.push(o)});
+    dmLoaded=true;dmMsg=''}
+  catch(e){dmMsg=dmWhy(e)}
+  dmBusy=false;if(tl==='mgr')toolsView()}
+function dmSections(){const s={};dmRows.concat(dmFields.map(f=>({section:f}))).forEach(r=>{const k=r.section.toLowerCase();if(!s[k])s[k]=r.section});return Object.keys(s).map(k=>s[k]).sort((a,b)=>a.toLowerCase().localeCompare(b.toLowerCase()))}
+const dmCanon=n=>{const k=n.toLowerCase(),s=dmSections();for(const x of s)if(x.toLowerCase()===k)return x;return n};
+const dmLabels=()=>{const l={};DM_DEF.forEach(x=>l[x]=1);dmRows.forEach(r=>{if(r.label)l[r.label]=1});return Object.keys(l).sort((a,b)=>a.toLowerCase().localeCompare(b.toLowerCase()))};
+const DM_COPY='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 017.5 4H16"/></svg>';
+const DM_EYE='<svg viewBox="0 0 24 24"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const DM_EYEOFF='<svg viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.7 10.7 0 0112 5c6.5 0 10.5 7 10.5 7a17 17 0 01-3.2 3.9M6.6 6.6A17 17 0 001.5 12S5.5 19 12 19a10.5 10.5 0 004.4-1"/><path d="M9.9 9.9a3 3 0 004.2 4.2"/></svg>';
+function dmItem(r){if(r.kind==='label')return'<div class="dmi"><div class="dmt">'+esc(r.value)+'</div></div>';
+  const pw=dmIsPw(r.label)||dmIsPw(r.pwLabel),hid=pw&&!dmShown[r.id],v=hid?'••••••••':esc(r.value);
+  return'<div class="dmi"><div class="dmt">'+(r.label?'<span class="dml2">'+esc(r.label)+'</span>':'')+v+'</div><div class="dma">'+(pw?'<button type="button" class="dmb" data-dm="eye" data-id="'+r.id+'" aria-label="'+(hid?'Show':'Hide')+'">'+(hid?DM_EYE:DM_EYEOFF)+'</button>':'')+'<button type="button" class="dmb" data-dm="copy" data-id="'+r.id+'" aria-label="Copy">'+DM_COPY+'</button></div></div>'}
+function dmListHtml(){if(dmMsg)return'<div class="hint">'+esc(dmMsg)+'</div>';
+  if(!dmPick)return'<div class="hint">'+(dmRows.length?'Select a section above to view its data.':'No data yet. Add some in New entry.')+'</div>';
+  const v=dmRows.filter(r=>r.section.toLowerCase()===dmPick.toLowerCase());return v.length?v.map(dmItem).join(''):'<div class="hint">No data in this section yet.</div>'}
+function dmPaint(){const el=$('dm_list');if(el)el.innerHTML=dmListHtml()}
+function dmHtml(){
+  if(!dmLoaded&&!dmBusy&&!dmMsg)setTimeout(dmLoad,0);
+  const top=`<div class="segs two"><button type="button" class="seg${dmMode==='view'?' on':''}" data-dm="mode" data-v="view">View data</button><button type="button" class="seg${dmMode==='new'?' on':''}" data-dm="mode" data-v="new">New entry</button></div>`;
+  let b='';
+  if(dmMode==='view')b=`<select id="dm_pick" class="dmf"><option value="">Choose a section</option>${dmSections().map(s=>`<option${s===dmPick?' selected':''}>${esc(s)}</option>`).join('')}</select><div class="dmlist" id="dm_list">${dmListHtml()}</div>`;
+  else{const lb=dmLabels(),opt='<option value="">Select field</option>'+lb.map(x=>`<option>${esc(x)}</option>`).join('')+'<option value="__new">+ Add new</option>';
+    b=`<div class="segs two"><button type="button" class="seg${dmSingle?' on':''}" data-dm="single" data-v="1">Single</button><button type="button" class="seg${dmSingle?'':' on'}" data-dm="single" data-v="0">Multiple</button></div>
+<input id="dm_sec" class="dmf" list="dm_secs" placeholder="Section name" autocomplete="off"><datalist id="dm_secs">${dmSections().map(s=>`<option value="${esc(s)}">`).join('')}</datalist>
+${dmSingle?'<input id="dm_d1" class="dmf" placeholder="Data" autocomplete="off">':[1,2].map(n=>`<div class="two2"><select id="dm_l${n}" class="dmf" data-dmn="${n}">${opt}</select><input id="dm_v${n}" class="dmf" placeholder="Value" autocomplete="off"></div><input id="dm_n${n}" class="dmf" data-dmn="${n}" style="display:none" placeholder="New field name" autocomplete="off">`).join('')}
+<button type="button" class="mini" id="dm_save">Save</button><div class="hint" id="dm_msg">${esc(dmMsg)}</div>`}
+  return'<div class="card tl">'+top+b+'</div>'}
+const dmFlash=t=>{const e=$('dm_msg');if(e){e.textContent=t;setTimeout(()=>{if(e.textContent===t)e.textContent=''},2200)}};
+const dmLabel=n=>{const v=$('dm_l'+n).value;return v==='__new'?$('dm_n'+n).value.trim():v};
+const dmType=n=>{const e=$('dm_v'+n);if(e)e.type=dmIsPw(dmLabel(n))?'password':'text'};
+async function dmSave(){const sec=$('dm_sec').value.trim(),add=[];
+  if(!sec){dmFlash('Enter a section name');return}
+  if(dmSingle){const d=$('dm_d1').value.trim();if(!d){dmFlash('Enter data');return}add.push({value:d})}
+  else{[1,2].forEach(n=>{const l=dmLabel(n),v=$('dm_v'+n).value.trim();if(l&&v)add.push({label:l,value:v})});if(!add.length){dmFlash('Enter a field and value');return}}
+  const isNew=dmSections().map(x=>x.toLowerCase()).indexOf(sec.toLowerCase())<0,name=dmCanon(sec),btn=$('dm_save');btn.disabled=true;btn.textContent='Saving...';
+  const post=(range,vals)=>dmApi('/values/'+encodeURIComponent(range)+':append?valueInputOption=RAW&insertDataOption=INSERT_ROWS',{method:'POST',body:JSON.stringify({values:vals})});
+  try{await post('Data!A1',add.map(o=>o.label?[name,o.value,o.label]:[name,o.value]));if(isNew)await post('Fields!A1',[[name]]);
+    dmPick=name;dmMode='view';dmLoaded=false;dmMsg='';await dmLoad()}
+  catch(e){btn.disabled=false;btn.textContent='Save';dmFlash(dmWhy(e))}}
+$('tools').addEventListener('click',ev=>{const t=ev.target.closest('[data-dm]');
+  if(t){const a=t.dataset.dm;
+    if(a==='mode'){dmMode=t.dataset.v;dmShown={};toolsView()}
+    else if(a==='single'){dmSingle=t.dataset.v==='1';toolsView()}
+    else if(a==='eye'){dmShown[t.dataset.id]=!dmShown[t.dataset.id];dmPaint()}
+    else if(a==='copy'){const r=dmRows.find(x=>x.id===t.dataset.id);if(r)(navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(r.value):Promise.reject()).then(()=>{t.classList.add('ok');setTimeout(()=>t.classList.remove('ok'),900)},()=>{})}
+    return}
+  if(ev.target.id==='dm_save')dmSave()});
+$('tools').addEventListener('change',ev=>{const t=ev.target;
+  if(t.id==='dm_pick'){dmPick=t.value;dmShown={};dmPaint()}
+  else if(t.dataset&&t.dataset.dmn&&t.tagName==='SELECT'){const n=t.dataset.dmn;$('dm_n'+n).style.display=t.value==='__new'?'block':'none';dmType(+n);fit()}});
+$('tools').addEventListener('input',ev=>{const t=ev.target;if(t.dataset&&t.dataset.dmn&&t.tagName==='INPUT')dmType(+t.dataset.dmn)});
 /* keep sub-tab bars the same visual size whatever the panel zoom is */
 (function(){const _fit=fit;fit=function(){
   const bars=()=>document.querySelectorAll('.panel .segs[id]');bars().forEach(b=>b.style.zoom='');

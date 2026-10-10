@@ -1113,7 +1113,8 @@ $('tools').addEventListener('input',ev=>{const t=ev.target;if(t.dataset&&t.datas
 let MF=jget('mf',{}),BK=Object.assign({adj:0},jget('bk',{})),BIN=jget('bin',[]),RC=jget('rc',null);
 if(!Array.isArray(RC))RC=[{n:'Truck repayment',cat:'Truck Repayment',amt:5000,day:2,from:'2026-11'}];
 BIN=BIN.filter(b=>Date.now()-b.at<30*864e5);
-function saveX(){jset('mf',MF);jset('bk',BK);jset('rc',RC);jset('bin',BIN)}saveX();
+let XT=jget('xt',0);
+function saveX(q){jset('mf',MF);jset('bk',BK);jset('rc',RC);jset('bin',BIN);if(!q){XT=Date.now();jset('xt',XT);pushXsoon()}}saveX(true);
 const BIZ_START='2026-09-28',A=n=>fmt(n);
 const dAU=(k,o)=>new Date(k+'T00:00').toLocaleDateString('en-AU',o||{day:'numeric',month:'short'});
 const pad2=n=>String(n).padStart(2,'0');
@@ -1237,6 +1238,21 @@ $('rep').addEventListener('click',ev=>{const t=ev.target.closest('[data-tm],[dat
 $('rep').addEventListener('input',ev=>{if(ev.target.id==='fq'){fq=ev.target.value;findPaint()}});
 $('rep').addEventListener('change',ev=>{if(ev.target.id==='ft'){ft=ev.target.value;findPaint()}else if(ev.target.id==='fmn'){fmn=ev.target.value;findPaint()}});
 
+
+/* ===== sync cash settings (bank balance, invoices, recurring) across devices ===== */
+const XTAB='BMPData',okTok=()=>tok&&Date.now()<tokExp;let xTimer=null,xBusy=false;
+function pushXsoon(){clearTimeout(xTimer);xTimer=setTimeout(pushX,1200)}
+async function xPut(v){const a={spreadsheetId:SID,range:XTAB+'!A1:A1',values:[[JSON.stringify(v)]]};
+  try{await mcp.callTool('Google Sheets','update_values',a)}
+  catch(e){if(e&&e.code)throw e;await mcp.callTool('Google Sheets','update_spreadsheet',{spreadsheetId:SID,requests:[{addSheet:{properties:{title:XTAB}}}]});await mcp.callTool('Google Sheets','update_values',a)}}
+async function pushX(){if(!okTok()||xBusy)return;xBusy=true;try{await xPut({t:XT,mf:MF,bk:BK,rc:RC})}catch(e){}finally{xBusy=false}}
+async function pullX(){if(!okTok()||xBusy)return;xBusy=true;
+  try{let r=null;try{const g=await mcp.callTool('Google Sheets','get_values',{spreadsheetId:SID,range:XTAB+'!A1:A1'});const v=(g.payload.values||[])[0];r=v&&v[0]?JSON.parse(v[0]):null}catch(e){if(e&&e.code)throw e}
+    if(!r||(+r.t||0)<XT||(!r.t&&XT)){xBusy=false;await pushX();return}
+    if((+r.t||0)>XT){MF=r.mf||{};BK=Object.assign({adj:0},r.bk||{});if(Array.isArray(r.rc))RC=r.rc;XT=+r.t;saveX(true);jset('xt',XT);render();if($('tools').classList.contains('on'))toolsView()}
+  }catch(e){}finally{xBusy=false}}
+const ls0=loadSheet;loadSheet=async function(){await ls0();await pullX()};
+let lastVis=0;document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&okTok()&&Date.now()-lastVis>15000){lastVis=Date.now();autoSync().then(loadSheet)}});
 /* laptop view helpers */
 (function(){const wide=()=>matchMedia('(min-width:1000px) and (min-height:520px)').matches;
   const r0=render;render=function(){r0();$('earn').classList.toggle('pro',cf==='pro');if(wide())document.querySelectorAll('#rep details.bk').forEach(d=>d.open=true);fit()};window.render=render;

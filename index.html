@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>BMP Earnings</title>
+<title>BMP Hub</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="BMP Earnings">
+<meta name="apple-mobile-web-app-title" content="BMP Hub">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#030d1f">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -436,6 +436,10 @@ html.locked .wrap{visibility:hidden}
 .rcr label.f2{grid-column:1/-1}.rcr label.f2:first-child{padding-right:26px}
 .rcr input,.rcr select,.card.tl .rcr select{width:100%!important;box-sizing:border-box;text-align:left;max-width:none!important;min-width:0;font-size:14px;text-transform:none;letter-spacing:0;color:#fff}
 .rcr b{position:absolute;top:6px;right:10px;grid-column:auto!important;grid-row:auto!important;padding:0!important;color:#ff7a8a;cursor:pointer;font-size:15px}
+.rcs{max-height:calc(100dvh - 300px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:2px;min-height:160px}
+.rsh{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#F5D6A6;margin:2px 0 6px;display:flex;justify-content:space-between;border-bottom:1px solid rgba(245,214,166,.35);padding-bottom:2px}
+.rsh span{color:var(--muted)}
+@media (min-width:1000px) and (min-height:520px){.rcs{max-height:calc(100vh - 330px)}}
 </style>
 <script>try{if(JSON.parse(localStorage.getItem("lk")||"null").pin)document.documentElement.classList.add("locked")}catch(e){}</script>
 </head>
@@ -1029,7 +1033,7 @@ $('lkp').onclick=async ev=>{const b=ev.target.closest('[data-k]');if(!b)return;c
     LK={pin:h,cred:null};jset('lk',LK);hideLock();const cb=lkCb;if(cb)cb();return}
   if(h!==(LK&&LK.pin)){$('lkm').textContent='Wrong PIN';lkDraw();return}
   hideLock();if(lkCb)lkCb()};
-async function enrollFid(){try{const c=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:'BMP Earnings'},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:'owner',displayName:'BMP owner'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},timeout:60000}});
+async function enrollFid(){try{const c=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:'BMP Hub'},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:'owner',displayName:'BMP owner'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},timeout:60000}});
   if(c){LK.cred=b64(c.rawId);jset('lk',LK)}}catch(e){alert('Face ID could not be set up on this device. Your PIN lock still works.')}}
 $('lkf').onclick=async()=>{try{await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),allowCredentials:[{type:'public-key',id:unb64(LK.cred)}],userVerification:'required',timeout:60000}});hideLock()}catch(e){$('lkm').textContent='Face ID failed. Use your PIN.'}};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)hiddenAt=Date.now();else if(LK&&LK.pin&&hiddenAt&&Date.now()-hiddenAt>60000&&$('lockov').style.display!=='flex'){document.documentElement.classList.add('locked');showLock('unlock','Enter PIN')}});
@@ -1140,7 +1144,7 @@ function recHtml(){const cats=[...document.querySelectorAll('#cat option')].map(
 <label>Repeats<select data-rc="${i}" data-f="freq"><option value="m"${w?'':' selected'}>Every month</option><option value="w"${w?' selected':''}>Every week</option></select></label>
 ${w?`<label>On<select data-rc="${i}" data-f="wd">${[1,2,3,4,5,6,0].map(d=>`<option value="${d}"${+r.wd===d?' selected':''}>${WD[d]}</option>`).join('')}</select></label>`:`<label>Day of month<input data-rc="${i}" data-f="day" type="number" inputmode="numeric" min="1" max="28" value="${esc(r.day)}" placeholder="1-28"></label>`}
 <label>Starting<input data-rc="${i}" data-f="from" type="month" value="${esc(r.from)}"></label></div>`};
-  return `<div class="card tl"><div class="pfh">Recurring expenses</div><div class="rcs">${RC.map(card).join('')||'<div class="hint">Nothing set up yet.</div>'}</div>
+  return `<div class="card tl"><div class="pfh">Recurring expenses</div><div class="rcs">${[['w','Weekly'],['m','Monthly']].map(([f,n])=>{const L=RC.map((r,i)=>[r,i]).filter(([r])=>(r.freq==='w')===(f==='w'));return `<div class="rsh">${n} <span>${L.length}</span></div>`+(L.map(([r,i])=>card(r,i)).join('')||'<div class="hint">None yet.</div>')}).join('')}</div>
 <div class="hint">On the due day a Log button appears on the Cashflow tab. One tap adds the expense. Pick the category from the list.</div>
 <div class="two2"><button type="button" class="mini" id="b_radd2">+ Add item</button><button type="button" class="mini" id="b_rsal">+ Salary &amp; Super</button></div></div>`}
 const rcSal=()=>RC.some(r=>r.freq==='w'&&/^salary/i.test(r.cat||'')&&+r.amt>0);
